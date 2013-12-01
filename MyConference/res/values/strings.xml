@@ -3,6 +3,8 @@
 
     <string name="app_name">MyConference</string>
     <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="hello_world">Hello World!</string>
+    
+    <string name="test_button">Navigation Drawer Activity</string>
 
 </resources>
