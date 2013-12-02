@@ -68,6 +68,7 @@ public class NavigationDrawerActivity extends ActionBarActivity {
 			public void onDrawerOpened(View drawerView) {
 				actionBar.setTitle("Menu");
 				invalidateOptionsMenu();
+
 			} 
 			// This is an example. Changing names.
 			
@@ -92,13 +93,10 @@ public class NavigationDrawerActivity extends ActionBarActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
-
-
 	// Toggle with icon
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
 		navigationDrawerToggle.syncState();
 	}
-
 }
