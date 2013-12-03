@@ -35,6 +35,7 @@ public class NavigationDrawerActivity extends ActionBarActivity {
 		
 		navigationDrawerList = (ListView) findViewById(R.id.navigation_drawer_list);
 		navigationDrawerLayout = (DrawerLayout) findViewById(R.id.navigation_drawer_layout);
+		navigationDrawerLayout.openDrawer(navigationDrawerList);
 		
 		navigationDrawerList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
 											android.R.id.text1, listOptions));
