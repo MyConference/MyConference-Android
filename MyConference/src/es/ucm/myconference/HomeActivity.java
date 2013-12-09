@@ -11,6 +11,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -18,10 +19,10 @@ import com.actionbarsherlock.app.ActionBar;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings.Secure;
-import android.text.GetChars;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -47,6 +48,7 @@ public class HomeActivity extends ActionBarActivity implements OnClickListener {
 	private TextView signUpWrongPass;
 	private static final String BASE_URL = "http://raspi.darkhogg.es:4321/v0.1/auth/signup";
 	private static final String APP_ID = "df3ae937-c8d6-40f8-8145-c8747c3ca56c";
+	private static final String USER_PREF = "UserID";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -179,12 +181,7 @@ public class HomeActivity extends ActionBarActivity implements OnClickListener {
 			
 			// Build JSON Object
 			JSONObject jsonObject = new JSONObject();
-			jsonObject.accumulate("application_id", APP_ID);
-			jsonObject.accumulate("device_id", Secure.getString(context.getContentResolver(), Secure.ANDROID_ID));
-			JSONObject jsonUserData = new JSONObject();
-			jsonUserData.accumulate("email", signUpEmail.getText().toString());
-			jsonUserData.accumulate("password", signUpPass.getText().toString());
-			jsonObject.accumulate("user_data", jsonUserData);
+			buildJSONObject(jsonObject, context);
 			
 			// JSON to String
 			String json = jsonObject.toString();
@@ -222,8 +219,20 @@ public class HomeActivity extends ActionBarActivity implements OnClickListener {
 
 		@Override
 		protected void onPostExecute(String result) {
-			//TODO Save user_id in SharedPreferences
-			Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
+			
+			// Save user_id in SharedPreferences
+			try{
+				JSONArray arr = new JSONArray(result);
+				JSONObject info = arr.getJSONObject(0);
+				SharedPreferences preference = getPreferences(0);
+				SharedPreferences.Editor editor = preference.edit();
+				editor.putString(USER_PREF,info.getString("user_id"));
+				editor.commit();
+				
+			} catch(JSONException e){
+				throw new RuntimeException(e);
+			}
 		}
 		
 	}
@@ -243,6 +252,19 @@ public class HomeActivity extends ActionBarActivity implements OnClickListener {
 		}
  
         return result.toString();
+	}
+	
+	private static void buildJSONObject(JSONObject jsonObject, Context context){
+		try {
+			jsonObject.accumulate("application_id", APP_ID);
+			jsonObject.accumulate("device_id", Secure.getString(context.getContentResolver(), Secure.ANDROID_ID));
+			JSONObject jsonUserData = new JSONObject();
+			jsonUserData.accumulate("email", signUpEmail.getText().toString());
+			jsonUserData.accumulate("password", signUpPass.getText().toString());
+			jsonObject.accumulate("user_data", jsonUserData);
+		} catch (JSONException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 
