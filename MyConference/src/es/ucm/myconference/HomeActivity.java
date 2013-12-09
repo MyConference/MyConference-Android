@@ -1,13 +1,33 @@
 package es.ucm.myconference;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.actionbarsherlock.app.ActionBar;
 
+import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings.Secure;
+import android.text.GetChars;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 public class HomeActivity extends ActionBarActivity implements OnClickListener {
@@ -19,6 +39,14 @@ public class HomeActivity extends ActionBarActivity implements OnClickListener {
 	private Button homeStartSignUp;
 	private TextView notRegistered;
 	private TextView registered;
+	/* Register layout */
+	private Button homeSignUpButton;
+	private static EditText signUpEmail;
+	private static EditText signUpPass;
+	private EditText signUpRepeatPass;
+	private TextView signUpWrongPass;
+	private static final String BASE_URL = "http://raspi.darkhogg.es:4321/v0.1/auth/signup";
+	private static final String APP_ID = "df3ae937-c8d6-40f8-8145-c8747c3ca56c";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +99,16 @@ public class HomeActivity extends ActionBarActivity implements OnClickListener {
 		// Test button for Navigation Drawer
 		testButton = (Button) findViewById(R.id.test_button);
 		testButton.setOnClickListener(this);
+		
+		// Register layout
+		homeSignUpButton = (Button) findViewById(R.id.home_sign_up_button);
+		homeSignUpButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				register();
+			}
+		});
 	}
 
 	@Override
@@ -85,6 +123,10 @@ public class HomeActivity extends ActionBarActivity implements OnClickListener {
 	}
 	
 	private void changeToSignUp(){
+		// Wrong passwords' label not shown
+		signUpWrongPass = (TextView) findViewById(R.id.home_sign_up_wrong_passwords);
+		signUpWrongPass.setVisibility(View.GONE);
+		
 		mViewFlipper.setDisplayedChild(mViewFlipper.indexOfChild(findViewById(R.id.home_sign_up)));
 		actionBar.setTitle(R.string.home_register);
 	}
@@ -101,6 +143,107 @@ public class HomeActivity extends ActionBarActivity implements OnClickListener {
 		}
 	}
 	
+	
+	private void register(){
+		signUpEmail = (EditText) findViewById(R.id.home_sign_up_email);
+		signUpPass = (EditText) findViewById(R.id.home_sign_up_password);
+		signUpRepeatPass = (EditText) findViewById(R.id.home_sign_up_password_again);
+		
+		//Both passwords must be equal
+		if(!signUpPass.getText().toString().equals(signUpRepeatPass.getText().toString())){
+			signUpWrongPass.setVisibility(View.VISIBLE);
+			signUpPass.setText("");
+			signUpRepeatPass.setText("");
+		} else if(signUpPass.getText().length() < 8){ // Password must have 8 characters minimum
+			signUpWrongPass.setText(R.string.home_password_length);
+			signUpWrongPass.setVisibility(View.VISIBLE);
+			signUpPass.setText("");
+			signUpRepeatPass.setText("");
+		} else { //Everything okey
+			signUpWrongPass.setVisibility(View.GONE);
+			
+			// Request
+			new HttpAsyncTask().execute(BASE_URL);
+		}
+	}
+	
+	private static String post(String url, Context context) throws ClientProtocolException, IOException{
+		String result  = "";
+		try{
+			HttpClient client = new DefaultHttpClient();
+			HttpPost request = new HttpPost(url);
+			
+			// Include header
+			request.setHeader("Content-Type", "application/json");
+			request.setHeader("Accept", "application/json");
+			
+			// Build JSON Object
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.accumulate("application_id", APP_ID);
+			jsonObject.accumulate("device_id", Secure.getString(context.getContentResolver(), Secure.ANDROID_ID));
+			JSONObject jsonUserData = new JSONObject();
+			jsonUserData.accumulate("email", signUpEmail.getText().toString());
+			jsonUserData.accumulate("password", signUpPass.getText().toString());
+			jsonObject.accumulate("user_data", jsonUserData);
+			
+			// JSON to String
+			String json = jsonObject.toString();
+			StringEntity se = new StringEntity(json);
+			
+			// Set HttpPost entity
+			request.setEntity(se);
+			
+			//Execute
+			HttpResponse response = client.execute(request);
+			
+			// Response as Inputstream and convert to String
+			InputStream inputStream = response.getEntity().getContent();
+			if(inputStream != null){
+				result = inputStreamToString(inputStream);
+			}
+			
+		} catch(Exception e){
+			throw new RuntimeException(e);
+		}
+		return result;
+	}
+	
+	private class HttpAsyncTask extends AsyncTask<String, Void, String>{
+
+		@Override
+		protected String doInBackground(String... params) {
+			try {
+				return post(params[0], getApplicationContext());
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			} 
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			//TODO Save user_id in SharedPreferences
+			Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
+		}
+		
+	}
+	
+	private static String inputStreamToString(InputStream inputStream){
+		BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
+        String line = "";
+        StringBuilder result = new StringBuilder();
+        
+        try {
+			while((line = bufferedReader.readLine()) != null){
+			    result.append(line);
+			}
+	        inputStream.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+ 
+        return result.toString();
+	}
 	
 
 }

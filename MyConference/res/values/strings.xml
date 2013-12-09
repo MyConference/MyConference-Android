@@ -21,5 +21,7 @@
     <string name="home_password_again">Confirm password</string>
     <string name="home_registered">Already has account? Sign in here</string>
     <string name="home_register">Register</string>
+    <string name="home_same_password">Passwords don\'t match</string>
+    <string name="home_password_length">Password must have 8 characters minimum</string>
 
 </resources>

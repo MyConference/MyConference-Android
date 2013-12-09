@@ -147,10 +147,20 @@
 		    android:layout_marginTop="10dp"
 		    android:hint="@string/home_password_again"
 		    android:inputType="textPassword"/>
+		
+		<TextView 
+		    android:id="@+id/home_sign_up_wrong_passwords"
+		    android:layout_below="@id/home_sign_up_password_again"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+	        android:layout_centerHorizontal="true"
+	        android:text="@string/home_same_password"
+	        android:textColor="#ff0000"
+	        android:textAppearance="?android:attr/textAppearanceMedium"/>
 	    
 	    <Button 
 	        android:id="@+id/home_sign_up_button"
-	        android:layout_below="@id/home_sign_up_password_again"
+	        android:layout_below="@id/home_sign_up_wrong_passwords"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_centerHorizontal="true"
