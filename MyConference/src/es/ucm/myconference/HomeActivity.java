@@ -49,6 +49,10 @@ public class HomeActivity extends ActionBarActivity implements OnClickListener {
 	private static final String BASE_URL = "http://raspi.darkhogg.es:4321/v0.1/auth/signup";
 	private static final String APP_ID = "df3ae937-c8d6-40f8-8145-c8747c3ca56c";
 	private static final String USER_PREF = "UserID";
+	/* Login layout */
+	private Button homeSignInButton;
+	private EditText signInEmail;
+	private EditText signInPass;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +115,21 @@ public class HomeActivity extends ActionBarActivity implements OnClickListener {
 				register();
 			}
 		});
+		
+		//Login layout
+		homeSignInButton = (Button) findViewById(R.id.home_sign_in_button);
+		homeSignInButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO make login() static is better?
+				signInEmail = (EditText) findViewById(R.id.home_sign_in_email);
+				signInPass = (EditText) findViewById(R.id.home_sign_in_password);
+				Login login = new Login(getApplicationContext(), signInEmail.getText().toString(),
+										signInPass.getText().toString());
+				login.login();
+			}
+		});
 	}
 
 	@Override
@@ -165,7 +184,7 @@ public class HomeActivity extends ActionBarActivity implements OnClickListener {
 			signUpWrongPass.setVisibility(View.GONE);
 			
 			// Request
-			new HttpAsyncTask().execute(BASE_URL);
+			new RegisterAsyncTask().execute(BASE_URL);
 		}
 	}
 	
@@ -205,7 +224,7 @@ public class HomeActivity extends ActionBarActivity implements OnClickListener {
 		return result;
 	}
 	
-	private class HttpAsyncTask extends AsyncTask<String, Void, String>{
+	private class RegisterAsyncTask extends AsyncTask<String, Void, String>{
 
 		@Override
 		protected String doInBackground(String... params) {
@@ -219,20 +238,22 @@ public class HomeActivity extends ActionBarActivity implements OnClickListener {
 
 		@Override
 		protected void onPostExecute(String result) {
-			Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
-			
-			// Save user_id in SharedPreferences
-			try{
-				JSONArray arr = new JSONArray(result);
-				JSONObject info = arr.getJSONObject(0);
-				SharedPreferences preference = getPreferences(0);
-				SharedPreferences.Editor editor = preference.edit();
-				editor.putString(USER_PREF,info.getString("user_id"));
-				editor.commit();
+			if(result!=null){
+				Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
 				
-			} catch(JSONException e){
-				throw new RuntimeException(e);
-			}
+				// Save user_id in SharedPreferences
+				try{
+					JSONArray arr = new JSONArray(result);
+					JSONObject info = arr.getJSONObject(0);
+					SharedPreferences preference = getPreferences(0);
+					SharedPreferences.Editor editor = preference.edit();
+					editor.putString(USER_PREF,info.getString("user_id"));
+					editor.commit();
+					
+				} catch(JSONException e){
+					throw new RuntimeException(e);
+				}
+			} else Toast.makeText(getApplicationContext(), "No data", Toast.LENGTH_LONG).show();
 		}
 		
 	}
@@ -266,6 +287,4 @@ public class HomeActivity extends ActionBarActivity implements OnClickListener {
 			throw new RuntimeException(e);
 		}
 	}
-	
-
 }
