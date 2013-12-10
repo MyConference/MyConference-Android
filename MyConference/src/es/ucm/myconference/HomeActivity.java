@@ -1,34 +1,14 @@
 package es.ucm.myconference;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.actionbarsherlock.app.ActionBar;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.Settings.Secure;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 public class HomeActivity extends ActionBarActivity implements OnClickListener {
@@ -46,9 +26,9 @@ public class HomeActivity extends ActionBarActivity implements OnClickListener {
 	private static EditText signUpPass;
 	private EditText signUpRepeatPass;
 	private TextView signUpWrongPass;
-	private static final String BASE_URL = "http://raspi.darkhogg.es:4321/v0.1/auth/signup";
-	private static final String APP_ID = "df3ae937-c8d6-40f8-8145-c8747c3ca56c";
-	private static final String USER_PREF = "UserID";
+	//private static final String BASE_URL = "http://raspi.darkhogg.es:4321/v0.1/auth/signup";
+	//private static final String APP_ID = "df3ae937-c8d6-40f8-8145-c8747c3ca56c";
+	//private static final String USER_PREF = "UserID";
 	/* Login layout */
 	private Button homeSignInButton;
 	private EditText signInEmail;
@@ -122,7 +102,6 @@ public class HomeActivity extends ActionBarActivity implements OnClickListener {
 			
 			@Override
 			public void onClick(View v) {
-				// TODO make login() static is better?
 				signInEmail = (EditText) findViewById(R.id.home_sign_in_email);
 				signInPass = (EditText) findViewById(R.id.home_sign_in_password);
 				Login login = new Login(getApplicationContext(), signInEmail.getText().toString(),
@@ -184,11 +163,17 @@ public class HomeActivity extends ActionBarActivity implements OnClickListener {
 			signUpWrongPass.setVisibility(View.GONE);
 			
 			// Request
-			new RegisterAsyncTask().execute(BASE_URL);
+			//new RegisterAsyncTask().execute(BASE_URL);
+			
+			
+			 Register register = new Register(getApplicationContext(),signUpEmail.getText().toString(),
+			 									signUpPass.getText().toString());
+			 register.register();
+			 
 		}
 	}
 	
-	private static String post(String url, Context context) throws ClientProtocolException, IOException{
+	/*private static String post(String url, Context context) throws ClientProtocolException, IOException{
 		String result  = "";
 		try{
 			HttpClient client = new DefaultHttpClient();
@@ -286,5 +271,5 @@ public class HomeActivity extends ActionBarActivity implements OnClickListener {
 		} catch (JSONException e) {
 			throw new RuntimeException(e);
 		}
-	}
+	}*/
 }
