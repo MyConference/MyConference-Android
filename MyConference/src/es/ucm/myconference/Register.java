@@ -10,14 +10,15 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.provider.Settings.Secure;
+import android.util.Log;
 import android.widget.Toast;
 
 public class Register {
@@ -27,11 +28,13 @@ public class Register {
 	private static final String USER_PREF = "UserID";
 	private String email, password;
 	private Context context;
+	private Activity activity;
 	
-	public Register(Context context, String email, String password){
+	public Register(Context context, String email, String password, Activity activity){
 		this.context = context;
 		this.email = email;
 		this.password = password;
+		this.activity = activity;
 	}
 	
 	public void register(){
@@ -50,25 +53,31 @@ public class Register {
 				return null;
 			}
 		}
+		
+		@Override
+		protected void onPreExecute() {
+			activity.setProgressBarIndeterminateVisibility(true);
+		}
 
 		@Override
 		protected void onPostExecute(String result) {
-			if(result!=null){
-				Toast.makeText(context, result, Toast.LENGTH_LONG).show();
-				
+			activity.setProgressBarIndeterminateVisibility(false);
+			if(result!=null){				
 				// Save user_id in SharedPreferences
 				try{
-					JSONArray arr = new JSONArray(result);
-					JSONObject info = arr.getJSONObject(0);
+					JSONObject jsonObj = new JSONObject(result);
 					SharedPreferences preference = context.getSharedPreferences("MYPREFS", 0);
 					SharedPreferences.Editor editor = preference.edit();
-					editor.putString(USER_PREF,info.getString("user_id"));
+					editor.putString(USER_PREF,jsonObj.getString("user_id"));
 					editor.commit();
+					Log.d("user_id", result);
+					Toast.makeText(context, R.string.home_register_ok, Toast.LENGTH_LONG).show();
 					
 				} catch(JSONException e){
-					throw new RuntimeException(e);
+					Toast.makeText(context, R.string.home_register_error, Toast.LENGTH_LONG).show();
+					e.printStackTrace();
 				}
-			} else Toast.makeText(context, "No data", Toast.LENGTH_LONG).show();
+			} else Toast.makeText(context, R.string.home_register_error, Toast.LENGTH_LONG).show();
 		}
 		
 		private String post(String url){

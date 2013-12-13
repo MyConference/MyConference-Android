@@ -1,15 +1,16 @@
 package es.ucm.myconference;
 
-import com.actionbarsherlock.app.ActionBar;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
+
+import com.actionbarsherlock.app.ActionBar;
 
 public class HomeActivity extends ActionBarActivity implements OnClickListener {
 	
@@ -37,11 +38,13 @@ public class HomeActivity extends ActionBarActivity implements OnClickListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.activity_home);
 		
 		// Set up the action bar
 		actionBar = getSupportActionBar();
 		actionBar.setHomeButtonEnabled(true);
+		setProgressBarIndeterminateVisibility(false);
 		
 		// View Flipper actions
 		mViewFlipper = (ViewFlipper) findViewById(R.id.home_view_flipper);
@@ -105,7 +108,7 @@ public class HomeActivity extends ActionBarActivity implements OnClickListener {
 				signInEmail = (EditText) findViewById(R.id.home_sign_in_email);
 				signInPass = (EditText) findViewById(R.id.home_sign_in_password);
 				Login login = new Login(getApplicationContext(), signInEmail.getText().toString(),
-										signInPass.getText().toString());
+										signInPass.getText().toString(), HomeActivity.this);
 				login.login();
 			}
 		});
@@ -167,7 +170,7 @@ public class HomeActivity extends ActionBarActivity implements OnClickListener {
 			
 			
 			 Register register = new Register(getApplicationContext(),signUpEmail.getText().toString(),
-			 									signUpPass.getText().toString());
+			 									signUpPass.getText().toString(), this);
 			 register.register();
 			 
 		}

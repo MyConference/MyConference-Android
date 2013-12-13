@@ -14,6 +14,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.provider.Settings.Secure;
@@ -26,11 +27,13 @@ public class Login {
 	private Context context;
 	private String email;
 	private String pass;
+	private Activity activity;
 	
-	public Login(Context context, String email, String pass){
+	public Login(Context context, String email, String pass, Activity activity){
 		this.context = context;
 		this.email = email;
 		this.pass = pass;
+		this.activity = activity;
 	}
 	
 
@@ -50,13 +53,21 @@ public class Login {
 				return null;
 			}
 		}
-
+		
+		@Override
+		protected void onPreExecute() {
+			activity.setProgressBarIndeterminateVisibility(true);
+		}
+		
 		@Override
 		protected void onPostExecute(String result) {
-			if(result!=null)
+			activity.setProgressBarIndeterminateVisibility(false);
+			if(result!=null){
 				Toast.makeText(context, result, Toast.LENGTH_LONG).show();
-			else Toast.makeText(context, "No data", Toast.LENGTH_LONG).show();
-			// Save access_token, access_token_expires, refresh_token and refresh_token_expires
+				// Save access_token, access_token_expires, refresh_token and refresh_token_expires
+				// Redirect to Open activity
+			}
+			else Toast.makeText(context, R.string.home_login_error, Toast.LENGTH_LONG).show();
 		}
 		
 		private String post(String url) throws ClientProtocolException, IOException{
@@ -74,6 +85,7 @@ public class Login {
 				jsonObject.accumulate("application_id", APP_ID);
 				jsonObject.accumulate("device_id", Secure.getString(context.getContentResolver(), Secure.ANDROID_ID));
 				JSONObject jsonCredentials = new JSONObject();
+				jsonCredentials.accumulate("type", "password");
 				jsonCredentials.accumulate("email", email);
 				jsonCredentials.accumulate("password", pass);
 				jsonObject.accumulate("credentials", jsonCredentials);
