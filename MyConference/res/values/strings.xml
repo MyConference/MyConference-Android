@@ -5,11 +5,25 @@
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello World!</string>
     
-    <!-- Home Activity -->
-    <string name="test_button">Navigation Drawer Activity Test</string>
+    <!-- Home layout -->
+    <string name="home_sign_up">Sign Up</string>
+    
+    <!-- Sign in layout -->
     <string name="home_sign_in">Sign In</string>
     <string name="home_email">Email</string>
     <string name="home_password">Password</string>
     <string name="home_forgot_password">Forgot your password?</string>
+    <string name="home_not_registered">If you\'re new, register here</string>
+    <string name="home_login">Login</string>
+    <string name="home_login_error">An error occurred. Check your credentials</string>
+    
+    <!-- Sign up layout -->
+    <string name="home_password_again">Confirm password</string>
+    <string name="home_registered">Already has account? Sign in here</string>
+    <string name="home_register">Register</string>
+    <string name="home_same_password">Passwords don\'t match</string>
+    <string name="home_password_length">Password must have 8 characters minimum</string>
+    <string name="home_register_error">Something went wrong. Try again</string>
+    <string name="home_register_ok">Successfully registered</string>
 
 </resources>
