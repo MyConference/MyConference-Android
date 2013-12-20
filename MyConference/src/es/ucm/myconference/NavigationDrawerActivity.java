@@ -18,9 +18,9 @@ public class NavigationDrawerActivity extends ActionBarActivity {
 
 		private ListView navigationDrawerList;
 		private DrawerLayout navigationDrawerLayout;
-		private static final String[] listOptions = {"Option 1", "Option 2", "Option 3"};
 		private ActionBar actionBar;
 		private ActionBarDrawerToggle navigationDrawerToggle;
+		private String[] drawerOptions;
 		
 	@SuppressLint("NewApi")
 	@Override
@@ -37,8 +37,10 @@ public class NavigationDrawerActivity extends ActionBarActivity {
 		navigationDrawerLayout = (DrawerLayout) findViewById(R.id.navigation_drawer_layout);
 		navigationDrawerLayout.openDrawer(navigationDrawerList);
 		
+		// List of options and list's adapter
+		drawerOptions = getResources().getStringArray(R.array.drawer_options);
 		navigationDrawerList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
-											android.R.id.text1, listOptions));
+											android.R.id.text1, drawerOptions));
 		
 		navigationDrawerList.setOnItemClickListener(new OnItemClickListener() {
 
@@ -48,7 +50,7 @@ public class NavigationDrawerActivity extends ActionBarActivity {
                 navigationDrawerList.setItemChecked(position, true);
                 navigationDrawerLayout.closeDrawer(navigationDrawerList);
                 
-				Toast.makeText(getApplicationContext(), listOptions[position] + " clicked", Toast.LENGTH_SHORT).show();
+				Toast.makeText(getApplicationContext(), drawerOptions[position] + " clicked", Toast.LENGTH_SHORT).show();
 			}
 		});
 		
@@ -70,8 +72,6 @@ public class NavigationDrawerActivity extends ActionBarActivity {
 				actionBar.setTitle("Menu");
                 invalidateOptionsMenu();
 			} 
-			// This is an example. Changing names.
-			
 		};
 		
 		navigationDrawerLayout.setDrawerListener(navigationDrawerToggle);

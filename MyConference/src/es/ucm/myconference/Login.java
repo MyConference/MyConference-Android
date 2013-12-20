@@ -16,18 +16,25 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.provider.Settings.Secure;
+import android.util.Log;
 import android.widget.Toast;
 
 public class Login {
 
-	private static final String BASE_URL = "http://raspi.darkhogg.es:4321/v0.1/auth";
-	private static final String APP_ID = "df3ae937-c8d6-40f8-8145-c8747c3ca56c";
+	private static final String BASE_URL = "http://myconf-api-dev.herokuapp.com/auth";
+	private static final String APP_ID = "514ab570-72e5-4512-9723-f496da08e13a";
 	private Context context;
 	private String email;
 	private String pass;
 	private Activity activity;
+	private final static String ACCESS_TOKEN = "access_token";
+	private final static String ACCESS_TOKEN_EXPIRES = "access_token_expires";
+	private final static String REFRESH_TOKEN = "refresh_token";
+	private final static String REFRESH_TOKEN_EXPIRES = "refresh_token_expires";
 	
 	public Login(Context context, String email, String pass, Activity activity){
 		this.context = context;
@@ -63,9 +70,29 @@ public class Login {
 		protected void onPostExecute(String result) {
 			activity.setProgressBarIndeterminateVisibility(false);
 			if(result!=null){
-				Toast.makeText(context, result, Toast.LENGTH_LONG).show();
 				// Save access_token, access_token_expires, refresh_token and refresh_token_expires
-				// Redirect to Open activity
+				try {
+					JSONObject jsonObj = new JSONObject(result);
+					SharedPreferences preferences = context.getSharedPreferences("ACCESSPREFS", Context.MODE_PRIVATE);
+					SharedPreferences.Editor editor = preferences.edit();
+					
+					editor.putString(ACCESS_TOKEN, jsonObj.getString("access_token"));
+					editor.putString(REFRESH_TOKEN, jsonObj.getString("refresh_token"));
+					editor.putString(ACCESS_TOKEN_EXPIRES, jsonObj.getString("access_token_expires"));
+					editor.putString(REFRESH_TOKEN_EXPIRES, jsonObj.getString("refresh_token_expires"));
+					
+					editor.commit();
+					
+					Log.d("tokens", result);
+					
+					// Redirect to NavigationDrawer activity
+					Intent i = new Intent(context, NavigationDrawerActivity.class);
+					activity.startActivity(i);
+					
+				} catch (JSONException e) {
+					Toast.makeText(context, R.string.home_login_error, Toast.LENGTH_LONG).show();
+					e.printStackTrace();
+				}
 			}
 			else Toast.makeText(context, R.string.home_login_error, Toast.LENGTH_LONG).show();
 		}

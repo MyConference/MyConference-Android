@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array
+        name="drawer_options">
+        <item>What\'s new</item>
+        <item>Main Conference</item>
+        <item>Call for Papers</item>
+        <item>Organising Committee</item>
+        <item>Keynote Speakers</item>
+        <item>Conference Venue</item>
+        <item>Travel Information</item>
+        <item>Links</item>
+    </string-array>
+</resources>

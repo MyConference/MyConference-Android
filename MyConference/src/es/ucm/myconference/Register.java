@@ -23,9 +23,10 @@ import android.widget.Toast;
 
 public class Register {
 	
-	private static final String BASE_URL = "http://raspi.darkhogg.es:4321/v0.1/auth/signup";
-	private static final String APP_ID = "df3ae937-c8d6-40f8-8145-c8747c3ca56c";
-	private static final String USER_PREF = "UserID";
+	private static final String BASE_URL = "http://myconf-api-dev.herokuapp.com/auth/signup";
+	private static final String APP_ID = "514ab570-72e5-4512-9723-f496da08e13a";
+	private static final String USER_ID = "id";
+	private static final String USER_URI = "uri";
 	private String email, password;
 	private Context context;
 	private Activity activity;
@@ -63,14 +64,17 @@ public class Register {
 		protected void onPostExecute(String result) {
 			activity.setProgressBarIndeterminateVisibility(false);
 			if(result!=null){				
-				// Save user_id in SharedPreferences
+				// Save user (id and uri) in SharedPreferences
 				try{
-					JSONObject jsonObj = new JSONObject(result);
-					SharedPreferences preference = context.getSharedPreferences("MYPREFS", 0);
+					JSONObject jsonObj = new JSONObject(result).getJSONObject("user");
+					SharedPreferences preference = context.getSharedPreferences("USERPREFS", Context.MODE_PRIVATE);
 					SharedPreferences.Editor editor = preference.edit();
-					editor.putString(USER_PREF,jsonObj.getString("user_id"));
+					
+					editor.putString(USER_ID,jsonObj.getString("id"));
+					editor.putString(USER_URI,jsonObj.getString("uri"));
+					
 					editor.commit();
-					Log.d("user_id", result);
+					Log.d("user", result);
 					Toast.makeText(context, R.string.home_register_ok, Toast.LENGTH_LONG).show();
 					
 				} catch(JSONException e){
@@ -116,7 +120,8 @@ public class Register {
 				}
 				
 			} catch(Exception e){
-				throw new RuntimeException(e);
+				Toast.makeText(context, R.string.home_register_error, Toast.LENGTH_LONG).show();
+				e.printStackTrace();
 			}
 			return result;
 		}

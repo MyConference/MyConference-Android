@@ -9,7 +9,6 @@
     <string name="home_sign_up">Sign Up</string>
     
     <!-- Sign in layout -->
-    <string name="test_button">Navigation Drawer Activity Test</string>
     <string name="home_sign_in">Sign In</string>
     <string name="home_email">Email</string>
     <string name="home_password">Password</string>
@@ -25,6 +24,6 @@
     <string name="home_same_password">Passwords don\'t match</string>
     <string name="home_password_length">Password must have 8 characters minimum</string>
     <string name="home_register_error">Something went wrong. Try again</string>
-    <string name="home_register_ok">Succesfully registered</string>
+    <string name="home_register_ok">Successfully registered</string>
 
 </resources>
