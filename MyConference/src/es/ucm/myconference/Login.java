@@ -35,6 +35,8 @@ public class Login {
 	private final static String ACCESS_TOKEN_EXPIRES = "access_token_expires";
 	private final static String REFRESH_TOKEN = "refresh_token";
 	private final static String REFRESH_TOKEN_EXPIRES = "refresh_token_expires";
+	private final static String USER_ID = "id";
+	private final static String USER_URI = "uri";
 	
 	public Login(Context context, String email, String pass, Activity activity){
 		this.context = context;
@@ -80,7 +82,9 @@ public class Login {
 					editor.putString(REFRESH_TOKEN, jsonObj.getString("refresh_token"));
 					editor.putString(ACCESS_TOKEN_EXPIRES, jsonObj.getString("access_token_expires"));
 					editor.putString(REFRESH_TOKEN_EXPIRES, jsonObj.getString("refresh_token_expires"));
-					
+					JSONObject user = jsonObj.getJSONObject("user");
+					editor.putString(USER_ID, user.getString("id"));
+					editor.putString(USER_URI, user.getString("uri"));
 					editor.commit();
 					
 					Log.d("tokens", result);
