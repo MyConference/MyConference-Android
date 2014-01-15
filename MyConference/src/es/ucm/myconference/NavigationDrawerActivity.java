@@ -11,7 +11,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 public class NavigationDrawerActivity extends ActionBarActivity {
@@ -21,6 +23,8 @@ public class NavigationDrawerActivity extends ActionBarActivity {
 		private ActionBar actionBar;
 		private ActionBarDrawerToggle navigationDrawerToggle;
 		private String[] drawerOptions;
+		private Spinner conferencesSpinner;
+		private LinearLayout linear;
 		
 	@SuppressLint("NewApi")
 	@Override
@@ -33,9 +37,12 @@ public class NavigationDrawerActivity extends ActionBarActivity {
 		actionBar.setHomeButtonEnabled(true);
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		
+		linear = (LinearLayout) findViewById(R.id.navigation_drawer_menu);
+		
 		navigationDrawerList = (ListView) findViewById(R.id.navigation_drawer_list);
 		navigationDrawerLayout = (DrawerLayout) findViewById(R.id.navigation_drawer_layout);
-		navigationDrawerLayout.openDrawer(navigationDrawerList);
+		//navigationDrawerLayout.openDrawer(navigationDrawerList);
+		navigationDrawerLayout.openDrawer(linear);
 		
 		// List of options and list's adapter
 		drawerOptions = getResources().getStringArray(R.array.drawer_options);
@@ -48,7 +55,8 @@ public class NavigationDrawerActivity extends ActionBarActivity {
 			public void onItemClick(AdapterView<?>  parent, View view, int position, long id) {
 				// Highlight the selected item and close drawer
                 navigationDrawerList.setItemChecked(position, true);
-                navigationDrawerLayout.closeDrawer(navigationDrawerList);
+                //navigationDrawerLayout.closeDrawer(navigationDrawerList);
+        		navigationDrawerLayout.closeDrawer(linear);
                 
 				Toast.makeText(getApplicationContext(), drawerOptions[position] + " clicked", Toast.LENGTH_SHORT).show();
 			}
@@ -75,6 +83,12 @@ public class NavigationDrawerActivity extends ActionBarActivity {
 		};
 		
 		navigationDrawerLayout.setDrawerListener(navigationDrawerToggle);
+		
+		// Conferences spinner
+		conferencesSpinner = (Spinner) findViewById(R.id.navigation_drawer_conferences);
+		String[] conferences = {"Conference 1", "Conference 2"};
+		conferencesSpinner.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item,
+																conferences));
 	}
 
 	@Override
@@ -83,10 +97,12 @@ public class NavigationDrawerActivity extends ActionBarActivity {
         // true, then it has handled the app icon touch event
         if (item.getItemId() == android.R.id.home) {
 
-                if (navigationDrawerLayout.isDrawerOpen(navigationDrawerList)) {
-                        navigationDrawerLayout.closeDrawer(navigationDrawerList);
+                if (navigationDrawerLayout.isDrawerOpen(linear)) {
+                        //navigationDrawerLayout.closeDrawer(navigationDrawerList);
+            			navigationDrawerLayout.closeDrawer(linear);
                 } else {
-                        navigationDrawerLayout.openDrawer(navigationDrawerList);
+                        //navigationDrawerLayout.openDrawer(navigationDrawerList);
+                		navigationDrawerLayout.openDrawer(linear);
                 }
         }
 		return super.onOptionsItemSelected(item);
