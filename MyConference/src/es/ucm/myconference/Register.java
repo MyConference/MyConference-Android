@@ -13,6 +13,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import es.ucm.myconference.util.Constants;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -24,9 +26,6 @@ import android.widget.Toast;
 public class Register {
 	
 	private static final String BASE_URL = "http://myconf-api-dev.herokuapp.com/auth/signup";
-	private static final String APP_ID = "514ab570-72e5-4512-9723-f496da08e13a";
-	private static final String USER_ID = "id";
-	private static final String USER_URI = "uri";
 	private String email, password;
 	private Context context;
 	private Activity activity;
@@ -70,8 +69,8 @@ public class Register {
 					SharedPreferences preference = context.getSharedPreferences("USERPREFS", Context.MODE_PRIVATE);
 					SharedPreferences.Editor editor = preference.edit();
 					
-					editor.putString(USER_ID,jsonObj.getString("id"));
-					editor.putString(USER_URI,jsonObj.getString("uri"));
+					editor.putString(Constants.USER_ID,jsonObj.getString(Constants.USER_ID));
+					editor.putString(Constants.USER_URI,jsonObj.getString(Constants.USER_URI));
 					
 					editor.commit();
 					Log.d("user", result);
@@ -96,7 +95,7 @@ public class Register {
 				
 				// Build JSON Object
 				JSONObject jsonObject = new JSONObject();
-				jsonObject.accumulate("application_id", APP_ID);
+				jsonObject.accumulate("application_id", Constants.APP_ID);
 				jsonObject.accumulate("device_id", Secure.getString(context.getContentResolver(), Secure.ANDROID_ID));
 				JSONObject jsonUserData = new JSONObject();
 				jsonUserData.accumulate("email", email);

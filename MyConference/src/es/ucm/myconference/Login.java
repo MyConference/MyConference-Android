@@ -14,6 +14,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import es.ucm.myconference.util.Constants;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -31,12 +33,6 @@ public class Login {
 	private String email;
 	private String pass;
 	private Activity activity;
-	private final static String ACCESS_TOKEN = "access_token";
-	private final static String ACCESS_TOKEN_EXPIRES = "access_token_expires";
-	private final static String REFRESH_TOKEN = "refresh_token";
-	private final static String REFRESH_TOKEN_EXPIRES = "refresh_token_expires";
-	private final static String USER_ID = "id";
-	private final static String USER_URI = "uri";
 	
 	public Login(Context context, String email, String pass, Activity activity){
 		this.context = context;
@@ -78,13 +74,13 @@ public class Login {
 					SharedPreferences preferences = context.getSharedPreferences("ACCESSPREFS", Context.MODE_PRIVATE);
 					SharedPreferences.Editor editor = preferences.edit();
 					
-					editor.putString(ACCESS_TOKEN, jsonObj.getString("access_token"));
-					editor.putString(REFRESH_TOKEN, jsonObj.getString("refresh_token"));
-					editor.putString(ACCESS_TOKEN_EXPIRES, jsonObj.getString("access_token_expires"));
-					editor.putString(REFRESH_TOKEN_EXPIRES, jsonObj.getString("refresh_token_expires"));
+					editor.putString(Constants.ACCESS_TOKEN, jsonObj.getString(Constants.ACCESS_TOKEN));
+					editor.putString(Constants.REFRESH_TOKEN, jsonObj.getString(Constants.REFRESH_TOKEN));
+					editor.putString(Constants.ACCESS_TOKEN_EXPIRES, jsonObj.getString(Constants.ACCESS_TOKEN_EXPIRES));
+					editor.putString(Constants.REFRESH_TOKEN_EXPIRES, jsonObj.getString(Constants.REFRESH_TOKEN_EXPIRES));
 					JSONObject user = jsonObj.getJSONObject("user");
-					editor.putString(USER_ID, user.getString("id"));
-					editor.putString(USER_URI, user.getString("uri"));
+					editor.putString(Constants.USER_ID, user.getString(Constants.USER_ID));
+					editor.putString(Constants.USER_URI, user.getString(Constants.USER_URI));
 					editor.commit();
 					
 					Log.d("tokens", result);

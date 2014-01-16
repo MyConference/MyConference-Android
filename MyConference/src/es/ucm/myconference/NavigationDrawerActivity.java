@@ -4,17 +4,19 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.MenuItem;
+
+import es.ucm.myconference.util.Constants;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -102,16 +104,10 @@ public class NavigationDrawerActivity extends ActionBarActivity {
 		
 		navigationDrawerLayout.setDrawerListener(navigationDrawerToggle);
 		
-		// Conferences spinner
+		// Conferences spinner with AsyncTask
 		conferencesSpinner = (Spinner) findViewById(R.id.navigation_drawer_conferences);
-		String[] conferences = {"Conference 1", "Conference 2"};
-		
-		// With AsyncTask
 		String uuid = getUserId();
 		new ConferencesAsyncTask().execute(BASE_URL+uuid+"/conferences");
-		
-		conferencesSpinner.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item,
-																conferences));
 	}
 
 	@Override
@@ -140,7 +136,23 @@ public class NavigationDrawerActivity extends ActionBarActivity {
 	
 	private String getUserId(){
 		SharedPreferences user = getSharedPreferences("ACCESSPREFS", Context.MODE_PRIVATE);
-		return user.getString("id", null);
+		return user.getString(Constants.USER_ID, null);
+	}
+	
+	private String getUserAccessToken(){
+		SharedPreferences user = getSharedPreferences("ACCESSPREFS", Context.MODE_PRIVATE);
+		return user.getString(Constants.ACCESS_TOKEN, null);
+	}
+	
+	private void setSpinner(ArrayList<String> conferencesList){
+		// Fill the spinner with the list pass or if it's empty, with default list
+		if(conferencesList.isEmpty()){
+			conferencesList.add("Conference 1");
+			conferencesList.add("Conference 2");
+		}
+		
+		conferencesSpinner.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item,
+				conferencesList));
 	}
 	
 	private class ConferencesAsyncTask extends AsyncTask<String, Void, String>{
@@ -159,9 +171,16 @@ public class NavigationDrawerActivity extends ActionBarActivity {
 		protected void onPostExecute(String result) {
 			Log.d("conferences", result);
 			if(result!=null){
-				// Get conferences names
+				// Get conferences names into an Arraylist
 				try {
-					JSONObject jsonConfs = new JSONObject(result);
+					JSONArray jsonConfs = new JSONArray(result);
+					ArrayList<String> conferencesList = new ArrayList<String>();
+					if(jsonConfs.length()!=0){
+						for(int i=0; i<jsonConfs.length();i++){
+							conferencesList.add(jsonConfs.get(i).toString());
+						}
+					}
+					setSpinner(conferencesList);
 					
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -178,6 +197,7 @@ public class NavigationDrawerActivity extends ActionBarActivity {
 			// Include header
 			request.setHeader("Content-Type", "application/json");
 			request.setHeader("Accept", "application/json");
+			request.setHeader("Authorization", "Token "+getUserAccessToken());
 			
 			//Execute
 			HttpResponse response = client.execute(request);
