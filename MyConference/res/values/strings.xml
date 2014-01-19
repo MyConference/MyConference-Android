@@ -26,5 +26,11 @@
     <string name="home_register_error">Something went wrong. Try again</string>
     <string name="home_register_ok">Successfully registered</string>
     
+    <!-- NavigationDrawerActivity -->
+    <string name="alert_title">Exit</string>
+    <string name="alert_text">Are you sure you want to exit?</string>
+    
+    <!-- Settings Menu -->
+    <string name="action_logout">Logout</string>
 
 </resources>

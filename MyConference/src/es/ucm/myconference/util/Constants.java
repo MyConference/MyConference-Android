@@ -10,4 +10,6 @@ public class Constants {
 	public final static String ACCESS_TOKEN_EXPIRES = "access_token_expires";
 	public final static String REFRESH_TOKEN = "refresh_token";
 	public final static String REFRESH_TOKEN_EXPIRES = "refresh_token_expires";
+	
+	public final static String LOGOUT = "logout";
 }

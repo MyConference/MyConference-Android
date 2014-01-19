@@ -13,17 +13,18 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.view.MenuItem;
-
-import es.ucm.myconference.util.Constants;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.View;
@@ -35,7 +36,14 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-public class NavigationDrawerActivity extends ActionBarActivity {
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
+
+import es.ucm.myconference.util.Constants;
+
+public class NavigationDrawerActivity extends MyConferenceActivity {
 
 		private ListView navigationDrawerList;
 		private DrawerLayout navigationDrawerLayout;
@@ -52,10 +60,12 @@ public class NavigationDrawerActivity extends ActionBarActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.navigation_drawer_layout);
 		
+		setLogoutFalse();
 		// Set up the action bar
 		actionBar = getSupportActionBar();
 		actionBar.setHomeButtonEnabled(true);
 		actionBar.setDisplayHomeAsUpEnabled(true);
+		actionBar.setTitle("Menu");
 		
 		linear = (LinearLayout) findViewById(R.id.navigation_drawer_menu);
 		
@@ -79,6 +89,8 @@ public class NavigationDrawerActivity extends ActionBarActivity {
         		navigationDrawerLayout.closeDrawer(linear);
                 
 				Toast.makeText(getApplicationContext(), drawerOptions[position] + " clicked", Toast.LENGTH_SHORT).show();
+				//TODO Cada item será un fragment, para mantener la navigation drawer. Ver cómo se hacen
+				displayFragment(position);
 			}
 		});
 		
@@ -108,14 +120,19 @@ public class NavigationDrawerActivity extends ActionBarActivity {
 		conferencesSpinner = (Spinner) findViewById(R.id.navigation_drawer_conferences);
 		String uuid = getUserId();
 		new ConferencesAsyncTask().execute(BASE_URL+uuid+"/conferences");
+		
+		// Display default View for the first time
+		if (savedInstanceState == null){
+			displayFragment(0);
+		}
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Pass the event to ActionBarDrawerToggle, if it returns
         // true, then it has handled the app icon touch event
-        if (item.getItemId() == android.R.id.home) {
-
+		switch(item.getItemId()){
+			case android.R.id.home:
                 if (navigationDrawerLayout.isDrawerOpen(linear)) {
                         //navigationDrawerLayout.closeDrawer(navigationDrawerList);
             			navigationDrawerLayout.closeDrawer(linear);
@@ -123,8 +140,21 @@ public class NavigationDrawerActivity extends ActionBarActivity {
                         //navigationDrawerLayout.openDrawer(navigationDrawerList);
                 		navigationDrawerLayout.openDrawer(linear);
                 }
+                return true;
+			
+			case R.id.action_logout:
+				// Save logout in SharedPreferences
+				SharedPreferences preferences = this.getSharedPreferences("ACCESSPREFS", Context.MODE_PRIVATE);
+				SharedPreferences.Editor editor = preferences.edit();
+				editor.putBoolean(Constants.LOGOUT, true);
+				editor.commit();
+				// Exit app
+				finish();
+				return true;
+				
+			default:
+				return super.onOptionsItemSelected(item);
         }
-		return super.onOptionsItemSelected(item);
 	}
 
 	// Toggle with icon
@@ -144,6 +174,13 @@ public class NavigationDrawerActivity extends ActionBarActivity {
 		return user.getString(Constants.ACCESS_TOKEN, null);
 	}
 	
+	private void setLogoutFalse(){
+		SharedPreferences preferences = this.getSharedPreferences("ACCESSPREFS", Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = preferences.edit();
+		editor.putBoolean(Constants.LOGOUT, false);
+		editor.commit();
+	}
+	
 	private void setSpinner(ArrayList<String> conferencesList){
 		// Fill the spinner with the list pass or if it's empty, with default list
 		if(conferencesList.isEmpty()){
@@ -155,6 +192,67 @@ public class NavigationDrawerActivity extends ActionBarActivity {
 				conferencesList));
 	}
 	
+	private void displayFragment(int position){
+
+        Fragment fragment = null;
+        switch(position){
+        	case 0:
+        		fragment = new WhatsNewFragment();
+        		break;
+        }
+        
+        if(fragment!=null){
+        	FragmentManager fragmentManager = getSupportFragmentManager();
+        	FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        	fragmentTransaction.replace(R.id.main_layout, fragment).commit();
+        }
+        
+	}
+	
+	@Override
+	public void onBackPressed() {
+		AlertDialog.Builder exit = new AlertDialog.Builder(NavigationDrawerActivity.this);
+		exit.setTitle(R.string.alert_title);
+		exit.setMessage(R.string.alert_text);
+		exit.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				NavigationDrawerActivity.super.onBackPressed();
+			}
+		});
+		exit.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// Nothing to do
+				dialog.cancel();
+			}
+		});
+		exit.show();
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		// Save SharedPreferences for keeping login
+		SharedPreferences preferences = this.getSharedPreferences("ACCESSPREFS", Context.MODE_PRIVATE);
+		if(!preferences.getBoolean(Constants.LOGOUT, false)){
+			SharedPreferences.Editor editor = preferences.edit();
+			editor.putBoolean(Constants.LOGOUT, false);
+			editor.commit();
+		}
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getSupportMenuInflater();
+	    inflater.inflate(R.menu.home, menu);
+	    return true;
+	}
+
+
+
 	private class ConferencesAsyncTask extends AsyncTask<String, Void, String>{
 
 		@Override

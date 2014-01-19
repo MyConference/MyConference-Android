@@ -88,6 +88,7 @@ public class Login {
 					// Redirect to NavigationDrawer activity
 					Intent i = new Intent(context, NavigationDrawerActivity.class);
 					activity.startActivity(i);
+					activity.finish();
 					
 				} catch (JSONException e) {
 					Toast.makeText(context, R.string.home_login_error, Toast.LENGTH_LONG).show();

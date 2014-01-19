@@ -1,5 +1,8 @@
 package es.ucm.myconference;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -11,7 +14,9 @@ import android.widget.ViewFlipper;
 
 import com.actionbarsherlock.app.ActionBar;
 
-public class HomeActivity extends ActionBarActivity {
+import es.ucm.myconference.util.Constants;
+
+public class HomeActivity extends MyConferenceActivity {
 	
 	private ActionBar actionBar;
 	private ViewFlipper mViewFlipper;
@@ -32,6 +37,12 @@ public class HomeActivity extends ActionBarActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		// If the user didn't logout before exit, keep him log in
+		if(!getLogout()){
+			Intent i = new Intent(this, NavigationDrawerActivity.class);
+			startActivity(i);
+			finish();
+		}
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.activity_home);
@@ -154,5 +165,10 @@ public class HomeActivity extends ActionBarActivity {
 			 register.register();
 			 
 		}
+	}
+	
+	private Boolean getLogout(){
+		SharedPreferences user = getSharedPreferences("ACCESSPREFS", Context.MODE_PRIVATE);
+		return user.getBoolean(Constants.LOGOUT, true);
 	}
 }
