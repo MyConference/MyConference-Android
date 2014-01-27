@@ -29,6 +29,16 @@
     <!-- NavigationDrawerActivity -->
     <string name="alert_title">Exit</string>
     <string name="alert_text">Are you sure you want to exit?</string>
+    <string name="about_title">About PIC 2014</string>
+    <string name="about">The 2014 International Conference on Progress in Informatics and Computing (PIC-2014)
+         will be held on May 16-18, 2014 in Shanghai, which is famed as a thriving metropolis and one of the 
+         largest city in the world. The combination of the traditions and modernism and the East mixing with the
+          West has built its unique charm.. PIC-2014 will provide a forum for researchers and practitioners in 
+          academia and industry to discuss the progress, challenges, experiences and trends of the theoretical 
+          and application issues in information science, computer science, software engineering, and information 
+          management, to exchange ideas, share knowledge and promote future cooperation.</string>
+    <string name="drawer_menu_icon">Icon</string>
+    <string name="drawer_menu_item">Item</string>
     
     <!-- Settings Menu -->
     <string name="action_logout">Logout</string>

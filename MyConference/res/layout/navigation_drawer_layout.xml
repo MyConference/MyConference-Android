@@ -16,7 +16,7 @@
 
     <LinearLayout
         android:id="@+id/navigation_drawer_menu"
-        android:layout_width="240dp"
+        android:layout_width="270dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:background="#EEE"
@@ -32,7 +32,7 @@
 
         <ListView
             android:id="@+id/navigation_drawer_list"
-            android:layout_width="240dp"
+            android:layout_width="270dp"
             android:layout_height="match_parent" />
     </LinearLayout>
     <!-- End of navigation drawer -->

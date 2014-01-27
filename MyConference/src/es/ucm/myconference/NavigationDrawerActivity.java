@@ -19,6 +19,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -33,6 +34,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -42,6 +44,7 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 
 import es.ucm.myconference.util.Constants;
+import es.ucm.myconference.util.Data;
 
 public class NavigationDrawerActivity extends MyConferenceActivity {
 
@@ -49,9 +52,9 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		private DrawerLayout navigationDrawerLayout;
 		private ActionBar actionBar;
 		private ActionBarDrawerToggle navigationDrawerToggle;
-		private String[] drawerOptions;
 		private Spinner conferencesSpinner;
 		private LinearLayout linear;
+		private Cursor slideMenuCursor;
 		private final static String BASE_URL = "http://myconf-api-dev.herokuapp.com/users/";
 		
 	@SuppressLint("NewApi")
@@ -75,9 +78,12 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		navigationDrawerLayout.openDrawer(linear);
 		
 		// List of options and list's adapter
-		drawerOptions = getResources().getStringArray(R.array.drawer_options);
-		navigationDrawerList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
-											android.R.id.text1, drawerOptions));
+		String[] from = new String[] {"item", "icon"};
+		int[] to = new int[] {R.id.item_name, R.id.item_icon};
+		slideMenuCursor = Data.getSlideMenuCursor(getResources().getStringArray(R.array.drawer_options));
+		
+		navigationDrawerList.setAdapter(new SimpleCursorAdapter(this, R.layout.drawer_menu_item,
+											slideMenuCursor, from, to, 0));
 		
 		navigationDrawerList.setOnItemClickListener(new OnItemClickListener() {
 
@@ -88,8 +94,7 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
                 //navigationDrawerLayout.closeDrawer(navigationDrawerList);
         		navigationDrawerLayout.closeDrawer(linear);
                 
-				Toast.makeText(getApplicationContext(), drawerOptions[position] + " clicked", Toast.LENGTH_SHORT).show();
-				//TODO Cada item será un fragment, para mantener la navigation drawer. Ver cómo se hacen
+				//Toast.makeText(getApplicationContext(), drawerOptions[position] + " clicked", Toast.LENGTH_SHORT).show();
 				displayFragment(position);
 			}
 		});
@@ -121,10 +126,11 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		String uuid = getUserId();
 		new ConferencesAsyncTask().execute(BASE_URL+uuid+"/conferences");
 		
-		// Display default View for the first time
-		if (savedInstanceState == null){
-			displayFragment(0);
+		//Open AboutFragment at beginning
+		if(savedInstanceState == null){
+			displayFragment(7);
 		}
+		
 	}
 
 	@Override
@@ -199,12 +205,16 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
         	case 0:
         		fragment = new WhatsNewFragment();
         		break;
+        	case 7:
+        		fragment = new AboutFragment();
+        		break;
         }
         
         if(fragment!=null){
         	FragmentManager fragmentManager = getSupportFragmentManager();
         	FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        	fragmentTransaction.replace(R.id.main_layout, fragment).commit();
+        	fragmentTransaction.replace(R.id.main_layout, fragment);
+        	fragmentTransaction.commit();
         }
         
 	}
