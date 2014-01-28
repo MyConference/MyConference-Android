@@ -12,4 +12,7 @@ public class Constants {
 	public final static String REFRESH_TOKEN_EXPIRES = "refresh_token_expires";
 	
 	public final static String LOGOUT = "logout";
+	
+	public final static String CONF_NAME = "name";
+	public final static String CONF_DESCRP = "description";
 }

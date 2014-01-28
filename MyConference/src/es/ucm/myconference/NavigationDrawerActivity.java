@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -13,6 +16,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -31,12 +35,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
@@ -55,6 +59,7 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		private Spinner conferencesSpinner;
 		private LinearLayout linear;
 		private Cursor slideMenuCursor;
+		private HashMap<String, String> conferencesList;
 		private final static String BASE_URL = "http://myconf-api-dev.herokuapp.com/users/";
 		
 	@SuppressLint("NewApi")
@@ -94,7 +99,6 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
                 //navigationDrawerLayout.closeDrawer(navigationDrawerList);
         		navigationDrawerLayout.closeDrawer(linear);
                 
-				//Toast.makeText(getApplicationContext(), drawerOptions[position] + " clicked", Toast.LENGTH_SHORT).show();
 				displayFragment(position);
 			}
 		});
@@ -122,14 +126,21 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		navigationDrawerLayout.setDrawerListener(navigationDrawerToggle);
 		
 		// Conferences spinner with AsyncTask
+		conferencesList = new HashMap<String, String>();
 		conferencesSpinner = (Spinner) findViewById(R.id.navigation_drawer_conferences);
 		String uuid = getUserId();
 		new ConferencesAsyncTask().execute(BASE_URL+uuid+"/conferences");
 		
-		//Open AboutFragment at beginning
-		if(savedInstanceState == null){
-			displayFragment(7);
-		}
+		conferencesSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
+				displayFragment(7);
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {}
+		});
 		
 	}
 
@@ -187,15 +198,16 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		editor.commit();
 	}
 	
-	private void setSpinner(ArrayList<String> conferencesList){
+	private void setSpinner(Set<String> conferencesList){
+		//Create a list
+		List<String> list = new ArrayList<String>(conferencesList);
 		// Fill the spinner with the list pass or if it's empty, with default list
-		if(conferencesList.isEmpty()){
-			conferencesList.add("Conference 1");
-			conferencesList.add("Conference 2");
+		if(list.isEmpty()){
+			list.add("Conference 1");
 		}
 		
-		conferencesSpinner.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item,
-				conferencesList));
+		conferencesSpinner.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, 
+									list));
 	}
 	
 	private void displayFragment(int position){
@@ -207,6 +219,10 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
         		break;
         	case 7:
         		fragment = new AboutFragment();
+        		Bundle args = new Bundle();
+        		args.putString(Constants.CONF_NAME, conferencesSpinner.getSelectedItem().toString());
+        		args.putString(Constants.CONF_DESCRP, conferencesList.get(conferencesSpinner.getSelectedItem()));
+        		fragment.setArguments(args);
         		break;
         }
         
@@ -276,19 +292,25 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		}
 
 		@Override
+		protected void onPreExecute() {
+			setProgressBarIndeterminateVisibility(true);
+		}
+
+		@Override
 		protected void onPostExecute(String result) {
+			setProgressBarIndeterminateVisibility(false);
 			Log.d("conferences", result);
 			if(result!=null){
 				// Get conferences names into an Arraylist
 				try {
 					JSONArray jsonConfs = new JSONArray(result);
-					ArrayList<String> conferencesList = new ArrayList<String>();
 					if(jsonConfs.length()!=0){
 						for(int i=0; i<jsonConfs.length();i++){
-							conferencesList.add(jsonConfs.get(i).toString());
+							JSONObject conf = jsonConfs.getJSONObject(i);
+							conferencesList.put(conf.getString(Constants.CONF_NAME), conf.getString(Constants.CONF_DESCRP));
 						}
 					}
-					setSpinner(conferencesList);
+					setSpinner(conferencesList.keySet());
 					
 				} catch (JSONException e) {
 					e.printStackTrace();
