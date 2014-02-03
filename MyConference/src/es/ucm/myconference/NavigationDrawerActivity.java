@@ -18,6 +18,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -61,6 +63,15 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		private Cursor slideMenuCursor;
 		private HashMap<String, String> conferencesList;
 		private final static String BASE_URL = "http://myconf-api-dev.herokuapp.com/users/";
+		//AccountManager attributes
+		// The authority for the sync adapter's content provider
+	    public static final String AUTHORITY = "es.ucm.myconference.provider";
+	    // An account type, in the form of a domain name
+	    public static final String ACCOUNT_TYPE = "es.ucm.myconference";
+	    // The account name
+	    public static final String ACCOUNT = "testaccount";
+	    // Instance fields
+	    Account mAccount;
 		
 	@SuppressLint("NewApi")
 	@Override
@@ -75,6 +86,9 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setTitle("Menu");
 		
+		// Create the test account
+        mAccount = CreateSyncAccount(this);
+
 		linear = (LinearLayout) findViewById(R.id.navigation_drawer_menu);
 		
 		navigationDrawerList = (ListView) findViewById(R.id.navigation_drawer_list);
@@ -276,6 +290,32 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 	    inflater.inflate(R.menu.home, menu);
 	    return true;
 	}
+	
+	/**
+     * Create a new dummy account for the sync adapter
+     *
+     * @param context The application context
+     */
+    public static Account CreateSyncAccount(Context context) {
+        // Create the account type and default account
+        Account newAccount = new Account(ACCOUNT, ACCOUNT_TYPE);
+        // Get an instance of the Android account manager
+        AccountManager accountManager = (AccountManager) context.getSystemService(ACCOUNT_SERVICE);
+        /*
+         * Add the account and account type, no password or user data
+         * If successful, return the Account object, otherwise report an error.
+         */
+        if (accountManager.addAccountExplicitly(newAccount, null, null)) {
+           return newAccount;
+        } else {
+            /*
+             * The account exists or some other error occurred. Log this, report it,
+             * or handle it internally.
+             */
+        	throw new RuntimeException();
+        }
+    }
+
 
 
 
