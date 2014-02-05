@@ -22,6 +22,7 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -63,15 +64,7 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		private Cursor slideMenuCursor;
 		private HashMap<String, String> conferencesList;
 		private final static String BASE_URL = "http://myconf-api-dev.herokuapp.com/users/";
-		//AccountManager attributes
-		// The authority for the sync adapter's content provider
-	    public static final String AUTHORITY = "es.ucm.myconference.provider";
-	    // An account type, in the form of a domain name
-	    public static final String ACCOUNT_TYPE = "es.ucm.myconference";
-	    // The account name
-	    public static final String ACCOUNT = "testaccount";
-	    // Instance fields
-	    Account mAccount;
+	    private Account mAccount;
 		
 	@SuppressLint("NewApi")
 	@Override
@@ -87,13 +80,13 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		actionBar.setTitle("Menu");
 		
 		// Create the test account
-        mAccount = CreateSyncAccount(this);
+		if(mAccount!=null)
+			mAccount = CreateSyncAccount(this);
 
 		linear = (LinearLayout) findViewById(R.id.navigation_drawer_menu);
 		
 		navigationDrawerList = (ListView) findViewById(R.id.navigation_drawer_list);
 		navigationDrawerLayout = (DrawerLayout) findViewById(R.id.navigation_drawer_layout);
-		//navigationDrawerLayout.openDrawer(navigationDrawerList);
 		navigationDrawerLayout.openDrawer(linear);
 		
 		// List of options and list's adapter
@@ -110,7 +103,6 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 			public void onItemClick(AdapterView<?>  parent, View view, int position, long id) {
 				// Highlight the selected item and close drawer
                 navigationDrawerList.setItemChecked(position, true);
-                //navigationDrawerLayout.closeDrawer(navigationDrawerList);
         		navigationDrawerLayout.closeDrawer(linear);
                 
 				displayFragment(position);
@@ -127,7 +119,7 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 			@Override
 			public void onDrawerClosed(View drawerView) {
 				 actionBar.setTitle(getResources().getString(R.string.app_name));
-				 invalidateOptionsMenu(); //Not done yet. Remove action items that are contextual to the main content
+				 invalidateOptionsMenu(); //TODO Remove action items that are contextual to the main content
 			}
 	
 			@Override
@@ -165,10 +157,8 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		switch(item.getItemId()){
 			case android.R.id.home:
                 if (navigationDrawerLayout.isDrawerOpen(linear)) {
-                        //navigationDrawerLayout.closeDrawer(navigationDrawerList);
             			navigationDrawerLayout.closeDrawer(linear);
                 } else {
-                        //navigationDrawerLayout.openDrawer(navigationDrawerList);
                 		navigationDrawerLayout.openDrawer(linear);
                 }
                 return true;
@@ -181,6 +171,17 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 				editor.commit();
 				// Exit app
 				finish();
+				return true;
+				
+			case R.id.action_refresh:
+				//Respond by calling requestSync(). This is an asynchronous operation.
+				// Pass the settings flags by inserting them in a bundle
+		        Bundle settingsBundle = new Bundle();
+		        settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+		        settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+		        
+		         //Request the sync for the default account, authority, and manual sync settings
+		        ContentResolver.requestSync(mAccount, Constants.AUTHORITY, settingsBundle);
 				return true;
 				
 			default:
@@ -217,7 +218,7 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		List<String> list = new ArrayList<String>(conferencesList);
 		// Fill the spinner with the list pass or if it's empty, with default list
 		if(list.isEmpty()){
-			list.add("Conference 1");
+			list.add("No data");
 		}
 		
 		conferencesSpinner.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, 
@@ -296,9 +297,9 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
      *
      * @param context The application context
      */
-    public static Account CreateSyncAccount(Context context) {
+    public Account CreateSyncAccount(Context context) {
         // Create the account type and default account
-        Account newAccount = new Account(ACCOUNT, ACCOUNT_TYPE);
+        Account newAccount = new Account(Constants.ACCOUNT, Constants.ACCOUNT_TYPE);
         // Get an instance of the Android account manager
         AccountManager accountManager = (AccountManager) context.getSystemService(ACCOUNT_SERVICE);
         /*
@@ -312,7 +313,8 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
              * The account exists or some other error occurred. Log this, report it,
              * or handle it internally.
              */
-        	throw new RuntimeException();
+        	Log.d("AccountManager", "Some error occurred.");
+        	return mAccount;
         }
     }
 

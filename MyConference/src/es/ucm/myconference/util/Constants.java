@@ -15,4 +15,12 @@ public class Constants {
 	
 	public final static String CONF_NAME = "name";
 	public final static String CONF_DESCRP = "description";
+	
+	//AccountManager attributes
+	// The authority for the sync adapter's content provider
+    public static final String AUTHORITY = "es.ucm.myconference.provider";
+    // An account type, in the form of a domain name
+    public static final String ACCOUNT_TYPE = "es.ucm.myconference";
+    // The account name
+    public static final String ACCOUNT = "testaccount";
 }
