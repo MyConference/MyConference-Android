@@ -1,22 +1,9 @@
 package es.ucm.myconference;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -27,7 +14,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.os.AsyncTask;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
@@ -63,12 +50,12 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		private LinearLayout linear;
 		private Cursor slideMenuCursor;
 		private HashMap<String, String> conferencesList;
-		private final static String BASE_URL = "http://myconf-api-dev.herokuapp.com/users/";
 	    private Account mAccount;
 		
 	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		Log.d("Inicio", "onCreate()");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.navigation_drawer_layout);
 		
@@ -80,8 +67,7 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		actionBar.setTitle("Menu");
 		
 		// Create the test account
-		if(mAccount!=null)
-			mAccount = CreateSyncAccount(this);
+		mAccount = CreateSyncAccount(this);
 
 		linear = (LinearLayout) findViewById(R.id.navigation_drawer_menu);
 		
@@ -131,11 +117,28 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		
 		navigationDrawerLayout.setDrawerListener(navigationDrawerToggle);
 		
-		// Conferences spinner with AsyncTask
+		// Conferences spinner
 		conferencesList = new HashMap<String, String>();
 		conferencesSpinner = (Spinner) findViewById(R.id.navigation_drawer_conferences);
-		String uuid = getUserId();
-		new ConferencesAsyncTask().execute(BASE_URL+uuid+"/conferences");
+		//String uuid = getUserId();
+		//new ConferencesAsyncTask().execute(BASE_URL+uuid+"/conferences");
+		Cursor cursor;
+		Uri uri = Uri.parse("content://" + Constants.PROVIDER_NAME + "/conferences/*");
+		String[] columns = new String[]{
+				Constants._ID,
+				Constants.CONF_NAME,
+				Constants.CONF_DESCRP
+		};
+		
+		cursor = getContentResolver().query(uri, columns, null, null, null);
+		if(cursor!=null){
+			while(cursor.moveToNext()){
+				conferencesList.put(cursor.getString(1), cursor.getString(2));
+			}
+			
+		}
+		cursor.close();
+		setSpinner(conferencesList.keySet());
 		
 		conferencesSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 
@@ -174,11 +177,15 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 				return true;
 				
 			case R.id.action_refresh:
+				
+				Log.d("Refresh", "Refresh button pushed");
 				//Respond by calling requestSync(). This is an asynchronous operation.
 				// Pass the settings flags by inserting them in a bundle
 		        Bundle settingsBundle = new Bundle();
 		        settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
 		        settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+		        settingsBundle.putString(Constants.USER_UUID, getUserId());
+		        settingsBundle.putString(Constants.ACCESS_TOKEN, getUserAccessToken());
 		        
 		         //Request the sync for the default account, authority, and manual sync settings
 		        ContentResolver.requestSync(mAccount, Constants.AUTHORITY, settingsBundle);
@@ -313,15 +320,11 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
              * The account exists or some other error occurred. Log this, report it,
              * or handle it internally.
              */
-        	Log.d("AccountManager", "Some error occurred.");
         	return mAccount;
         }
     }
 
-
-
-
-	private class ConferencesAsyncTask extends AsyncTask<String, Void, String>{
+	/*private class ConferencesAsyncTask extends AsyncTask<String, Void, String>{
 
 		@Override
 		protected String doInBackground(String... params) {
@@ -349,6 +352,7 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 					if(jsonConfs.length()!=0){
 						for(int i=0; i<jsonConfs.length();i++){
 							JSONObject conf = jsonConfs.getJSONObject(i);
+							//Save to provider instead of this
 							conferencesList.put(conf.getString(Constants.CONF_NAME), conf.getString(Constants.CONF_DESCRP));
 						}
 					}
@@ -377,27 +381,11 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 			// Response as Inputstream and convert to String
 			InputStream inputStream = response.getEntity().getContent();
 			if(inputStream != null){
-				result = inputStreamToString(inputStream);
+				result = Data.inputStreamToString(inputStream);
 			}
 			
 			return result;
 		}
 		
-		private String inputStreamToString(InputStream inputStream){
-			BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
-	        String line = "";
-	        StringBuilder result = new StringBuilder();
-	        
-	        try {
-				while((line = bufferedReader.readLine()) != null){
-				    result.append(line);
-				}
-		        inputStream.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-	 
-	        return result.toString();
-		}
-	}
+	}*/
 }

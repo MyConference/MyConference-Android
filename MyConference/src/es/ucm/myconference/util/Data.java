@@ -1,5 +1,10 @@
 package es.ucm.myconference.util;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 import es.ucm.myconference.R;
 import android.database.Cursor;
 import android.database.MatrixCursor;
@@ -28,5 +33,22 @@ public final class Data {
 	
 	private static void slideMenuRow(String name, int icon){
 		slideMenu.addRow(new Object[] {++index, name, icon} );
+	}
+	
+	public static String inputStreamToString(InputStream inputStream){
+		BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
+        String line = "";
+        StringBuilder result = new StringBuilder();
+        
+        try {
+			while((line = bufferedReader.readLine()) != null){
+			    result.append(line);
+			}
+	        inputStream.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+ 
+        return result.toString();
 	}
 }

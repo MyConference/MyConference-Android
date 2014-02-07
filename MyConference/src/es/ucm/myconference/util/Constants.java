@@ -7,6 +7,7 @@ public class Constants {
 	public static final String APP_ID = "514ab570-72e5-4512-9723-f496da08e13a";
 	public static final String USER_ID = "id";
 	public static final String USER_URI = "uri";
+	public static final String USER_UUID = "uuid";
 	
 	public final static String ACCESS_TOKEN = "access_token";
 	public final static String ACCESS_TOKEN_EXPIRES = "access_token_expires";
@@ -20,7 +21,7 @@ public class Constants {
 	
 	//AccountManager attributes
 	// The authority for the sync adapter's content provider
-    public static final String AUTHORITY = "es.ucm.myconference.provider";
+    public static final String AUTHORITY = "es.ucm.myconference";
     // An account type, in the form of a domain name
     public static final String ACCOUNT_TYPE = "es.ucm.myconference";
     // The account name

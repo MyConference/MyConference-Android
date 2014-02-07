@@ -1,10 +1,7 @@
 package es.ucm.myconference;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -15,6 +12,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import es.ucm.myconference.util.Constants;
+import es.ucm.myconference.util.Data;
 
 import android.app.Activity;
 import android.content.Context;
@@ -131,30 +129,13 @@ public class Login {
 				// Response as Inputstream and convert to String
 				InputStream inputStream = response.getEntity().getContent();
 				if(inputStream != null){
-					result = inputStreamToString(inputStream);
+					result = Data.inputStreamToString(inputStream);
 				}
 			} catch(JSONException e){
 				throw new RuntimeException(e);
 			}
 			
 			return result;
-		}
-		
-		private String inputStreamToString(InputStream inputStream){
-			BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
-	        String line = "";
-	        StringBuilder result = new StringBuilder();
-	        
-	        try {
-				while((line = bufferedReader.readLine()) != null){
-				    result.append(line);
-				}
-		        inputStream.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-	 
-	        return result.toString();
 		}
 	}
 }

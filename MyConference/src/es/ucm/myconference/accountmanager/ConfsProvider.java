@@ -11,8 +11,9 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.util.Log;
 
-public class Provider extends ContentProvider {
+public class ConfsProvider extends ContentProvider {
 
 	private static final UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     static {
@@ -23,6 +24,7 @@ public class Provider extends ContentProvider {
 	
     @Override
     public boolean onCreate() {
+    	Log.d("Provider", "Creating database");
     	Context context = getContext();
     	SqlHelper dbHelper = new SqlHelper(context); //Creates all tables in database
     	confsDB = dbHelper.getWritableDatabase();

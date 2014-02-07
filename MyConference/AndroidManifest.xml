@@ -58,8 +58,8 @@
         </activity>
     	
         <provider
-	        android:name=".accountmanager.Provider"
-	        android:authorities="es.ucm.myconference.provider"
+	        android:name=".accountmanager.ConfsProvider"
+	        android:authorities="es.ucm.myconference"
 	        android:syncable="true"
 	        android:exported="false"/>
         
