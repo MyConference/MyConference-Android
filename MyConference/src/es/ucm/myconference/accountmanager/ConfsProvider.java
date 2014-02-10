@@ -79,10 +79,14 @@ public class ConfsProvider extends ContentProvider {
     
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        return confsDB.delete(Constants.DATABASE_TABLE_CONFS, selection, selectionArgs);
+    	int rows = confsDB.delete(Constants.DATABASE_TABLE_CONFS, selection, selectionArgs);
+    	getContext().getContentResolver().notifyChange(uri, null);
+    	return rows;
     }
     
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        return confsDB.update(Constants.DATABASE_TABLE_CONFS, values, selection, selectionArgs);
+        int rows = confsDB.update(Constants.DATABASE_TABLE_CONFS, values, selection, selectionArgs);
+        getContext().getContentResolver().notifyChange(uri, null);
+        return rows;
     }
 }

@@ -1,10 +1,7 @@
 package es.ucm.myconference;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
-
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
@@ -13,9 +10,11 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -37,6 +36,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 
+import es.ucm.myconference.accountmanager.SqlHelper;
 import es.ucm.myconference.util.Constants;
 import es.ucm.myconference.util.Data;
 
@@ -51,6 +51,8 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		private Cursor slideMenuCursor;
 		private HashMap<String, String> conferencesList;
 	    private Account mAccount;
+	    private Handler handler = new Handler();
+	    private DatabaseObserver observer = null;
 		
 	@SuppressLint("NewApi")
 	@Override
@@ -117,29 +119,12 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		
 		navigationDrawerLayout.setDrawerListener(navigationDrawerToggle);
 		
+		// Conferences hashmap
+		setConferencesHashmap();
+
 		// Conferences spinner
-		conferencesList = new HashMap<String, String>();
 		conferencesSpinner = (Spinner) findViewById(R.id.navigation_drawer_conferences);
-		//String uuid = getUserId();
-		//new ConferencesAsyncTask().execute(BASE_URL+uuid+"/conferences");
-		Cursor cursor;
-		Uri uri = Uri.parse("content://" + Constants.PROVIDER_NAME + "/conferences/*");
-		String[] columns = new String[]{
-				Constants._ID,
-				Constants.CONF_NAME,
-				Constants.CONF_DESCRP
-		};
-		
-		cursor = getContentResolver().query(uri, columns, null, null, null);
-		if(cursor!=null){
-			while(cursor.moveToNext()){
-				conferencesList.put(cursor.getString(1), cursor.getString(2));
-			}
-			
-		}
-		cursor.close();
-		setSpinner(conferencesList.keySet());
-		
+		setSpinner();
 		conferencesSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 
 			@Override
@@ -150,6 +135,16 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 			@Override
 			public void onNothingSelected(AdapterView<?> parent) {}
 		});
+
+		//Register observers
+		registerObservers();
+		
+		//Load data for the first time 
+		if(isFirstTime()){
+			setFirstTime(false);
+			onRefreshButton();
+		}
+		
 		
 	}
 
@@ -179,16 +174,7 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 			case R.id.action_refresh:
 				
 				Log.d("Refresh", "Refresh button pushed");
-				//Respond by calling requestSync(). This is an asynchronous operation.
-				// Pass the settings flags by inserting them in a bundle
-		        Bundle settingsBundle = new Bundle();
-		        settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
-		        settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-		        settingsBundle.putString(Constants.USER_UUID, getUserId());
-		        settingsBundle.putString(Constants.ACCESS_TOKEN, getUserAccessToken());
-		        
-		         //Request the sync for the default account, authority, and manual sync settings
-		        ContentResolver.requestSync(mAccount, Constants.AUTHORITY, settingsBundle);
+				onRefreshButton();
 				return true;
 				
 			default:
@@ -220,16 +206,49 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		editor.commit();
 	}
 	
-	private void setSpinner(Set<String> conferencesList){
-		//Create a list
-		List<String> list = new ArrayList<String>(conferencesList);
+	private void setFirstTime(boolean it){
+		SharedPreferences preferences = this.getSharedPreferences("ACCESSPREFS", Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = preferences.edit();
+		editor.putBoolean(Constants.FIRST_TIME, it);
+		editor.commit();
+	}
+	
+	private boolean isFirstTime(){
+		SharedPreferences user = getSharedPreferences("ACCESSPREFS", Context.MODE_PRIVATE);
+		return user.getBoolean(Constants.FIRST_TIME, true);
+	}
+	
+	public void setSpinner(){
+		SqlHelper helper = new SqlHelper(getApplicationContext());
+		List<String> list = helper.getConfsNames();
 		// Fill the spinner with the list pass or if it's empty, with default list
 		if(list.isEmpty()){
 			list.add("No data");
 		}
 		
-		conferencesSpinner.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, 
-									list));
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, 
+																list);
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		conferencesSpinner.setAdapter(adapter);		
+	}
+	
+	public void setConferencesHashmap(){
+		conferencesList = new HashMap<String, String>();
+		Cursor cursor;
+		Uri uri = Uri.parse("content://" + Constants.PROVIDER_NAME + "/conferences/*");
+		String[] columns = new String[]{
+				Constants._ID,
+				Constants.CONF_NAME,
+				Constants.CONF_DESCRP
+		};
+		
+		cursor = getContentResolver().query(uri, columns, null, null, null);
+		if(cursor!=null){
+			while(cursor.moveToNext()){
+				conferencesList.put(cursor.getString(1), cursor.getString(2));
+			}
+		}
+		cursor.close();
 	}
 	
 	private void displayFragment(int position){
@@ -280,8 +299,18 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		exit.show();
 	}
 
+	
+	@Override
+	protected void onStart() {
+		Log.d("Start", "onStart()");
+		super.onStart();
+		//Register observers
+		registerObservers();
+	}
+
 	@Override
 	protected void onStop() {
+		Log.d("Stop", "onStop()");
 		super.onStop();
 		// Save SharedPreferences for keeping login
 		SharedPreferences preferences = this.getSharedPreferences("ACCESSPREFS", Context.MODE_PRIVATE);
@@ -290,6 +319,9 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 			editor.putBoolean(Constants.LOGOUT, false);
 			editor.commit();
 		}
+		
+		//Unregister observers
+		unregisterObservers();
 	}
 
 	@Override
@@ -297,6 +329,19 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		MenuInflater inflater = getSupportMenuInflater();
 	    inflater.inflate(R.menu.home, menu);
 	    return true;
+	}
+	
+	private void onRefreshButton(){
+		//Respond by calling requestSync(). This is an asynchronous operation.
+		// Pass the settings flags by inserting them in a bundle
+        Bundle settingsBundle = new Bundle();
+        settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+        settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+        settingsBundle.putString(Constants.USER_UUID, getUserId());
+        settingsBundle.putString(Constants.ACCESS_TOKEN, getUserAccessToken());
+        
+         //Request the sync for the default account, authority, and manual sync settings
+        ContentResolver.requestSync(mAccount, Constants.AUTHORITY, settingsBundle);
 	}
 	
 	/**
@@ -323,69 +368,34 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
         	return mAccount;
         }
     }
+    
+    private class DatabaseObserver extends ContentObserver{
 
-	/*private class ConferencesAsyncTask extends AsyncTask<String, Void, String>{
-
-		@Override
-		protected String doInBackground(String... params) {
-			try {
-				return get(params[0]);
-			} catch (Exception e) {
-				e.printStackTrace();
-				return null;
-			}
+		public DatabaseObserver(Handler handler) {
+			super(handler);
 		}
 
 		@Override
-		protected void onPreExecute() {
-			setProgressBarIndeterminateVisibility(true);
+		public void onChange(boolean selfChange, Uri uri) {
+			//When database changes, fill spinner with new data
+	        setSpinner();
+	        setConferencesHashmap();
 		}
 
 		@Override
-		protected void onPostExecute(String result) {
-			setProgressBarIndeterminateVisibility(false);
-			Log.d("conferences", result);
-			if(result!=null){
-				// Get conferences names into an Arraylist
-				try {
-					JSONArray jsonConfs = new JSONArray(result);
-					if(jsonConfs.length()!=0){
-						for(int i=0; i<jsonConfs.length();i++){
-							JSONObject conf = jsonConfs.getJSONObject(i);
-							//Save to provider instead of this
-							conferencesList.put(conf.getString(Constants.CONF_NAME), conf.getString(Constants.CONF_DESCRP));
-						}
-					}
-					setSpinner(conferencesList.keySet());
-					
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
-			}
+		public void onChange(boolean selfChange) {
+			onChange(selfChange, null);
 		}
-		
-		private String get(String url) throws ClientProtocolException, IOException{
-			String result="";
-			
-			HttpClient client = new DefaultHttpClient();
-			HttpGet request = new HttpGet(url);
-			
-			// Include header
-			request.setHeader("Content-Type", "application/json");
-			request.setHeader("Accept", "application/json");
-			request.setHeader("Authorization", "Token "+getUserAccessToken());
-			
-			//Execute
-			HttpResponse response = client.execute(request);
-			
-			// Response as Inputstream and convert to String
-			InputStream inputStream = response.getEntity().getContent();
-			if(inputStream != null){
-				result = Data.inputStreamToString(inputStream);
-			}
-			
-			return result;
-		}
-		
-	}*/
+    }
+    
+    private void registerObservers(){
+    	ContentResolver resolver = getContentResolver();
+    	observer = new DatabaseObserver(handler);
+    	resolver.registerContentObserver(Constants.CONTENT_URI_CONFS, true, observer);
+    }
+    
+    private void unregisterObservers(){
+    	ContentResolver resolver = getContentResolver();
+    	resolver.unregisterContentObserver(observer);
+    }
 }

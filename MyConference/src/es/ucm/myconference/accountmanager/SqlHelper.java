@@ -1,7 +1,11 @@
 package es.ucm.myconference.accountmanager;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import es.ucm.myconference.util.Constants;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -23,7 +27,24 @@ public class SqlHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		// TODO Auto-generated method stub
+		// Drop older table if existed
+		db.execSQL("DROP TABLE IF EXISTS " + Constants.DATABASE_TABLE_CONFS);
+        // Create tables again
+        onCreate(db);
 	}
-
+	
+	public List<String> getConfsNames(){
+    	List<String> list = new ArrayList<String>();
+    	String query = "SELECT NAME FROM " + Constants.DATABASE_TABLE_CONFS;
+    	SQLiteDatabase db = this.getWritableDatabase();
+    	Cursor c = db.rawQuery(query, null);
+    	if (c.moveToFirst()) {
+            do {
+                list.add(c.getString(0));
+            } while (c.moveToNext());
+        }
+    	c.close();
+    	db.close();
+    	return list;
+    }
 }

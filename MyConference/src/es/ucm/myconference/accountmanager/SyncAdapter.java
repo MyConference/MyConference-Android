@@ -92,6 +92,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 				JSONArray jsonConfs = new JSONArray(result);
 				if(jsonConfs.length()!=0){
 					Uri url = Uri.parse("content://" + Constants.PROVIDER_NAME + "/conferences");
+					//Delete previuos values
+					mContentResolver.delete(url, "1", null);
+					
 					ContentValues values;
 					for(int i=0; i<jsonConfs.length();i++){
 						JSONObject conf = jsonConfs.getJSONObject(i);
@@ -100,7 +103,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 						values.put(Constants.CONF_NAME, conf.getString(Constants.CONF_NAME));
 						values.put(Constants.CONF_DESCRP, conf.getString(Constants.CONF_DESCRP));
 						mContentResolver.insert(url, values);
-						//TODO Avisar al spinner para que cambie. Mirar Loaders
 					}
 				}
 				
