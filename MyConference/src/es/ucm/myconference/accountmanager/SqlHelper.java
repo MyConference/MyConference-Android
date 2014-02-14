@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import es.ucm.myconference.util.Constants;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class SqlHelper extends SQLiteOpenHelper {
 
@@ -19,16 +21,35 @@ public class SqlHelper extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase db) {
 		// All tables will be created here
 		if(db.isReadOnly()) db = getWritableDatabase();
-		String create = "CREATE TABLE IF NOT EXISTS " + Constants.DATABASE_TABLE_CONFS +
+		String createConfs = "CREATE TABLE IF NOT EXISTS " + Constants.DATABASE_TABLE_CONFS +
 						" (" + Constants._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-						Constants.CONF_NAME + " TEXT, " + Constants.CONF_DESCRP + " TEXT);";
-		db.execSQL(create);
+						Constants.CONF_NAME + " TEXT, " + Constants.CONF_DESCRP + " TEXT, " +
+						Constants.CONF_UUID + " TEXT);";
+		db.execSQL(createConfs);
+		Log.d("Table1", "Conferences table created");
+		
+		String createDocs = "CREATE TABLE IF NOT EXISTS " + Constants.DATABASE_TABLE_DOCS +
+						" (" + Constants._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+						Constants.CONF_UUID + " TEXT, " + Constants.DOC_TITLE + " TEXT, " +
+						Constants.DOC_DESCRIPTION + " TEXT, " + Constants.DOC_TYPE + " TEXT, " +
+						Constants.DOC_DATA + " TEXT);";
+		db.execSQL(createDocs);
+		Log.d("Table2", "Documents table created");
+		
+		ContentValues values = new ContentValues();
+		values.put(Constants.CONF_UUID, "176d32ed-4541-4066-8a1d-f3b7e1969152");
+		values.put(Constants.DOC_TITLE, "Prueba.pdf");
+		values.put(Constants.DOC_DESCRIPTION, "Un ejemplo de un archivo pdf");
+		values.put(Constants.DOC_TYPE, "pdf");
+		values.put(Constants.DOC_DATA, "Lo que sea");
+		db.insert(Constants.DATABASE_TABLE_DOCS, null, values);
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		// Drop older table if existed
 		db.execSQL("DROP TABLE IF EXISTS " + Constants.DATABASE_TABLE_CONFS);
+		db.execSQL("DROP TABLE IF EXISTS " + Constants.DATABASE_TABLE_DOCS);
         // Create tables again
         onCreate(db);
 	}

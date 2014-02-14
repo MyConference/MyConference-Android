@@ -37,5 +37,11 @@
     <!-- Settings Menu -->
     <string name="action_logout">Logout</string>
     <string name="action_refresh">Refresh</string>
+    
+    <!-- LinksFragment -->
+    <string name="link_icon">Icon</string>
+    <string name="link_name">Name</string>
+    <string name="link_description">Description</string>
+    <string name="link_empty">Loading&#8230;</string>
 
 </resources>

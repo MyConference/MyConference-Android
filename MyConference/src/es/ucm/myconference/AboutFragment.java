@@ -16,7 +16,7 @@ public class AboutFragment extends MyConferenceFragment {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		final View rootView = inflater.inflate(R.layout.about_fragment, container, false);
+		final View rootView = inflater.inflate(R.layout.fragment_about, container, false);
 
 		aboutTitle = (TextView) rootView.findViewById(R.id.about_title);
 		about = (TextView) rootView.findViewById(R.id.about);

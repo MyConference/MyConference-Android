@@ -19,6 +19,7 @@ public class Constants {
 	
 	public final static String CONF_NAME = "name";
 	public final static String CONF_DESCRP = "description";
+	public final static String CONF_UUID = "conf_uuid";
 	
 	//AccountManager attributes
 	// The authority for the sync adapter's content provider
@@ -29,12 +30,22 @@ public class Constants {
     public static final String ACCOUNT = "testaccount";
     
     //Provider
+    public static String DB_NAME = "myconference.db";
+    public static int DB_VERSION = 2;
+    
     public static final String PROVIDER_NAME = "es.ucm.myconference";
     public static final Uri CONTENT_URI_CONFS = Uri.parse("content://" + PROVIDER_NAME + "/conferences");
     public static final String _ID = "_id";
     public static final String DATABASE_TABLE_CONFS = "conferences";
     public static final int CONFS = 1;
     public static final int CONFS_ID = 2;
-    public static String DB_NAME = "myconference.db";
-    public static int DB_VERSION = 1;
+    
+    public static final String DATABASE_TABLE_DOCS = "documents";
+    public static final Uri CONTENT_URI_DOCS = Uri.parse("content://" + PROVIDER_NAME + "/documents");
+    public static final String DOC_TITLE = "title";
+    public static final String DOC_DESCRIPTION = "description";
+    public static final String DOC_TYPE = "type";
+    public static final String DOC_DATA = "data";
+    public static final int DOCS = 3;
+    public static final int DOCS_ID = 4;
 }

@@ -11,7 +11,7 @@ public class WhatsNewFragment extends MyConferenceFragment {
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		final View rootView = inflater.inflate(R.layout.whats_new_fragment, container, false);
+		final View rootView = inflater.inflate(R.layout.fragment_whats_new, container, false);
 		return rootView;
 	}
 	

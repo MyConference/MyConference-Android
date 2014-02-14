@@ -235,11 +235,11 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 	public void setConferencesHashmap(){
 		conferencesList = new HashMap<String, String>();
 		Cursor cursor;
-		Uri uri = Uri.parse("content://" + Constants.PROVIDER_NAME + "/conferences/*");
+		Uri uri = Uri.parse("content://" + Constants.PROVIDER_NAME + "/conferences");
 		String[] columns = new String[]{
 				Constants._ID,
 				Constants.CONF_NAME,
-				Constants.CONF_DESCRP
+				Constants.CONF_DESCRP,
 		};
 		
 		cursor = getContentResolver().query(uri, columns, null, null, null);
@@ -254,13 +254,17 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 	private void displayFragment(int position){
 
         Fragment fragment = null;
+        Bundle args = null;
         switch(position){
         	case 0:
         		fragment = new WhatsNewFragment();
         		break;
+        	case 6:
+        		fragment = new LinksFragment();
+        		break;
         	case 7:
         		fragment = new AboutFragment();
-        		Bundle args = new Bundle();
+        		args = new Bundle();
         		args.putString(Constants.CONF_NAME, conferencesSpinner.getSelectedItem().toString());
         		args.putString(Constants.CONF_DESCRP, conferencesList.get(conferencesSpinner.getSelectedItem()));
         		fragment.setArguments(args);
@@ -337,12 +341,37 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
         Bundle settingsBundle = new Bundle();
         settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
         settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-        settingsBundle.putString(Constants.USER_UUID, getUserId());
-        settingsBundle.putString(Constants.ACCESS_TOKEN, getUserAccessToken());
+        //User's id
+        settingsBundle.putString(Constants.USER_UUID, getUserId()); 
+        //User's access token
+        settingsBundle.putString(Constants.ACCESS_TOKEN, getUserAccessToken()); 
+        //Current conference's id
+        settingsBundle.putString(Constants.CONF_NAME, conferencesSpinner.getSelectedItem().toString()); 
         
          //Request the sync for the default account, authority, and manual sync settings
         ContentResolver.requestSync(mAccount, Constants.AUTHORITY, settingsBundle);
 	}
+	
+	/*private String getCurrentConferenceID(){
+		String uuid = "";
+		Cursor c;
+		Uri uri = Uri.parse("content://" + Constants.PROVIDER_NAME + "/conferences");
+		String[] columns = new String[] {
+				Constants.CONF_NAME,
+				Constants.CONF_UUID
+		};
+		
+		String where = Constants.CONF_NAME + " = ?";
+		String[] whereArgs = { conferencesSpinner.getSelectedItem().toString() };
+		c = getContentResolver().query(uri, columns, where, whereArgs, null);
+		if(c != null){
+			if(c.moveToFirst()){
+				uuid = c.getString(1);
+			}
+		}
+		c.close();
+		return uuid;
+	}*/
 	
 	/**
      * Create a new dummy account for the sync adapter
@@ -378,8 +407,8 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		@Override
 		public void onChange(boolean selfChange, Uri uri) {
 			//When database changes, fill spinner with new data
-	        setSpinner();
 	        setConferencesHashmap();
+	        setSpinner();
 		}
 
 		@Override
