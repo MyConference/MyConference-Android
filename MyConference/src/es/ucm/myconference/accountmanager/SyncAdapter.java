@@ -20,6 +20,7 @@ import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SyncResult;
 import android.net.Uri;
 import android.os.Bundle;
@@ -34,6 +35,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 	
 	// Define a variable to contain a content resolver instance
 	private ContentResolver mContentResolver;
+	private Context context;
 	private String confIdForRequest = "";
 	private final static String CONFS_URL = "http://myconf-api-dev.herokuapp.com";
 
@@ -43,6 +45,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 		super(context, autoInitialize);
 		
 		mContentResolver = context.getContentResolver();
+		this.context = context;
 	}
 
 	@SuppressLint("NewApi")
@@ -50,6 +53,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 	        super(context, autoInitialize, allowParallelSyncs);
 	        
 	        mContentResolver = context.getContentResolver(); 
+	        this.context = context;
 	}
 	
 	/*
@@ -61,6 +65,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 	public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, 
 								SyncResult syncResult) {
 		//Put the data transfer code here.
+		
 		
 		//GET users/<uuid>/conferences
 		Log.d("sync", "GET users/"+extras.getString(Constants.USER_UUID)+"/conferences");
@@ -159,11 +164,17 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 						}
 					}
 					
+					//Venues TODO
+					
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
 			}
 		}
+		
+		//Broadcast that sync has finished
+		Intent intent = new Intent(Constants.SYNC_FINISHED);
+		context.sendBroadcast(intent);
 		
 	}
 	

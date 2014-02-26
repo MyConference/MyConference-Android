@@ -35,7 +35,7 @@ public class SqlHelper extends SQLiteOpenHelper {
 						Constants.DOC_DATA + " TEXT);";
 		db.execSQL(createDocs);
 		Log.d("Table2", "Documents table created");
-		
+
 		ContentValues values = new ContentValues();
 		values.put(Constants.CONF_UUID, "176d32ed-4541-4066-8a1d-f3b7e1969152");
 		values.put(Constants.DOC_TITLE, "Prueba.pdf");
@@ -43,6 +43,14 @@ public class SqlHelper extends SQLiteOpenHelper {
 		values.put(Constants.DOC_TYPE, "pdf");
 		values.put(Constants.DOC_DATA, "Lo que sea");
 		db.insert(Constants.DATABASE_TABLE_DOCS, null, values);
+		
+		String createVenues = "CREATE TABLE IF NOT EXISTS " + Constants.DATABASE_TABLE_VENUES +
+						" (" + Constants._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + 
+						Constants.CONF_UUID + " TEXT, " + Constants.VENUE_NAME + " TEXT, " + 
+						Constants.VENUE_LATITUDE + " REAL, " + Constants.VENUE_LONGITUDE + " REAL, " +
+						Constants.VENUE_DETAILS + " TEXT);";
+		db.execSQL(createVenues);
+		Log.d("Table3", "Venues table created");
 	}
 
 	@Override
@@ -50,6 +58,7 @@ public class SqlHelper extends SQLiteOpenHelper {
 		// Drop older table if existed
 		db.execSQL("DROP TABLE IF EXISTS " + Constants.DATABASE_TABLE_CONFS);
 		db.execSQL("DROP TABLE IF EXISTS " + Constants.DATABASE_TABLE_DOCS);
+		db.execSQL("DROP TABLE IF EXISTS " + Constants.DATABASE_TABLE_VENUES);
         // Create tables again
         onCreate(db);
 	}

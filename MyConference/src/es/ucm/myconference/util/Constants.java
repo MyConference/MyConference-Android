@@ -8,6 +8,7 @@ public class Constants {
 	public static final String USER_ID = "id";
 	public static final String USER_URI = "uri";
 	public static final String USER_UUID = "uuid";
+	public static final String USER_PASS = "USER_PASS";
 	
 	public final static String ACCESS_TOKEN = "access_token";
 	public final static String ACCESS_TOKEN_EXPIRES = "access_token_expires";
@@ -27,12 +28,17 @@ public class Constants {
     // An account type, in the form of a domain name
     public static final String ACCOUNT_TYPE = "es.ucm.myconference";
     // The account name
-    public static final String ACCOUNT = "testaccount";
+    public static final String ACCOUNT_NAME = "myconferenceaccount";
+    public static final String AUTHTOKEN_TYPE = "es.ucm.myconference";
+    
+    public static final String SYNC_FINISHED = "sync_finished";
+    public static final String ERROR_MSG = "ERROR_MSG";
     
     //Provider
     public static String DB_NAME = "myconference.db";
-    public static int DB_VERSION = 2;
+    public static int DB_VERSION = 3;
     
+    //Database
     public static final String PROVIDER_NAME = "es.ucm.myconference";
     public static final Uri CONTENT_URI_CONFS = Uri.parse("content://" + PROVIDER_NAME + "/conferences");
     public static final String _ID = "_id";
@@ -48,4 +54,13 @@ public class Constants {
     public static final String DOC_DATA = "data";
     public static final int DOCS = 3;
     public static final int DOCS_ID = 4;
+    
+    public static final String DATABASE_TABLE_VENUES = "venues";
+    public static final Uri CONTENT_URI_VENUES = Uri.parse("content://" + PROVIDER_NAME + "/venues");
+    public static final String VENUE_NAME = "venue_name";
+    public static final String VENUE_LATITUDE = "venue_lat";
+    public static final String VENUE_LONGITUDE = "venue_lng";
+    public static final String VENUE_DETAILS = "venue_details";
+    public static final int VENUES = 5;
+    public static final int VENUES_ID = 6;
 }

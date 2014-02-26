@@ -7,7 +7,7 @@
     <uses-sdk
         android:minSdkVersion="9"
         android:targetSdkVersion="19" />
-    
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
     <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
@@ -18,33 +18,36 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-         <!-- The authenticator service -->
+
+        <!-- The authenticator service -->
         <service
-	            android:name=".accountmanager.AuthenticatorService"
-	            android:exported="false">
-	        <intent-filter>
-	            <action android:name="android.accounts.AccountAuthenticator"/>
-	        </intent-filter>
-	        <meta-data
-	            android:name="android.accounts.AccountAuthenticator"
-	            android:resource="@xml/authenticator" />
-    	</service>
-    	
-        <!-- The sync service  -->
-    	<service
-                android:name=".accountmanager.SyncService"
-                android:exported="true"
-                android:process=":sync">
+            android:name="es.ucm.myconference.accountmanager.AuthenticatorService"
+            android:exported="false" >
             <intent-filter>
-                <action android:name="android.content.SyncAdapter"/>
+                <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
-            <meta-data 
-                	android:name="android.content.SyncAdapter"
-                    android:resource="@xml/syncadapter" />
+
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
         </service>
-        
+
+        <!-- The sync service -->
+        <service
+            android:name="es.ucm.myconference.accountmanager.SyncService"
+            android:exported="true"
+            android:process=":sync" >
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/syncadapter" />
+        </service>
+
         <activity
-            android:name=".HomeActivity"
+            android:name="es.ucm.myconference.HomeActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -52,17 +55,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
-        <activity 
-            android:name=".NavigationDrawerActivity">
+        <activity android:name="es.ucm.myconference.NavigationDrawerActivity" >
         </activity>
-    	
+
         <provider
-	        android:name=".accountmanager.ConfsProvider"
-	        android:authorities="es.ucm.myconference"
-	        android:syncable="true"
-	        android:exported="false"/>
-        
+            android:name="es.ucm.myconference.accountmanager.ConfsProvider"
+            android:authorities="es.ucm.myconference"
+            android:exported="false"
+            android:syncable="true" />
+
+        <activity
+            android:name="es.ucm.myconference.accountmanager.LoginActivity"
+            android:label="@string/title_activity_login"
+            android:windowSoftInputMode="adjustResize|stateVisible" >
+        </activity>
     </application>
 
 </manifest>

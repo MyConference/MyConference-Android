@@ -6,9 +6,12 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.ContentObserver;
 import android.database.Cursor;
@@ -22,6 +25,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -53,12 +57,27 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 	    private Account mAccount;
 	    private Handler handler = new Handler();
 	    private DatabaseObserver observer = null;
+	    //SavedInstance
+	    private int lastFragment = 7;
+	    private boolean isMenuOpen = false;
+	    //Receiver
+	    private BroadcastReceiver syncFinishedReceiver = new BroadcastReceiver(){
+
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				setProgressBarIndeterminateVisibility(false);
+				findViewById(R.id.action_refresh).setVisibility(View.VISIBLE);
+				Log.d("Sync", "Sync finished");
+			}
+	    	
+	    };
 		
 	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		Log.d("Inicio", "onCreate()");
 		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.navigation_drawer_layout);
 		
 		setLogoutFalse();
@@ -75,7 +94,6 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		
 		navigationDrawerList = (ListView) findViewById(R.id.navigation_drawer_list);
 		navigationDrawerLayout = (DrawerLayout) findViewById(R.id.navigation_drawer_layout);
-		navigationDrawerLayout.openDrawer(linear);
 		
 		// List of options and list's adapter
 		String[] from = new String[] {"item", "icon"};
@@ -92,6 +110,7 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 				// Highlight the selected item and close drawer
                 navigationDrawerList.setItemChecked(position, true);
         		navigationDrawerLayout.closeDrawer(linear);
+        		isMenuOpen = false;
                 
 				displayFragment(position);
 			}
@@ -102,18 +121,20 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 									navigationDrawerLayout, // Navigation Drawer layout
 									R.drawable.ic_drawer, // Icon to use
 									R.string.app_name, // Description when drawer is opened
-									R.string.hello_world){ // Description when drawer is closed
+									R.string.app_name){ // Description when drawer is closed
 
 			@Override
 			public void onDrawerClosed(View drawerView) {
 				 actionBar.setTitle(getResources().getString(R.string.app_name));
 				 invalidateOptionsMenu(); //TODO Remove action items that are contextual to the main content
+				 isMenuOpen = false;
 			}
 	
 			@Override
 			public void onDrawerOpened(View drawerView) {
 				actionBar.setTitle("Menu");
                 invalidateOptionsMenu();
+                isMenuOpen = true;
 			} 
 		};
 		
@@ -129,7 +150,11 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
-				displayFragment(7);
+				displayFragment(lastFragment);
+				if(isMenuOpen)
+					navigationDrawerLayout.openDrawer(linear);
+				else
+					navigationDrawerLayout.closeDrawer(linear);
 			}
 
 			@Override
@@ -142,6 +167,7 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		//Load data for the first time 
 		if(isFirstTime()){
 			setFirstTime(false);
+			navigationDrawerLayout.openDrawer(linear);
 			onRefreshButton();
 		}
 		
@@ -156,8 +182,10 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 			case android.R.id.home:
                 if (navigationDrawerLayout.isDrawerOpen(linear)) {
             			navigationDrawerLayout.closeDrawer(linear);
+            			isMenuOpen = false;
                 } else {
                 		navigationDrawerLayout.openDrawer(linear);
+                		isMenuOpen = true;
                 }
                 return true;
 			
@@ -223,7 +251,7 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		List<String> list = helper.getConfsNames();
 		// Fill the spinner with the list pass or if it's empty, with default list
 		if(list.isEmpty()){
-			list.add("No data");
+			list.add("Loading...");
 		}
 		
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, 
@@ -259,8 +287,13 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
         	case 0:
         		fragment = new WhatsNewFragment();
         		break;
+        	case 4:
+        		fragment = new VenuesFragment();
         	case 6:
         		fragment = new LinksFragment();
+        		args = new Bundle();
+        		args.putString(Constants.CONF_UUID, getCurrentConferenceID());
+        		fragment.setArguments(args);
         		break;
         	case 7:
         		fragment = new AboutFragment();
@@ -277,6 +310,7 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
         	fragmentTransaction.replace(R.id.main_layout, fragment);
         	fragmentTransaction.commit();
         }
+        lastFragment = position;
         
 	}
 	
@@ -303,13 +337,26 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		exit.show();
 	}
 
-	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		//Register receiver for sync status
+		registerReceiver(syncFinishedReceiver, new IntentFilter(Constants.SYNC_FINISHED));
+	}
+
 	@Override
 	protected void onStart() {
 		Log.d("Start", "onStart()");
 		super.onStart();
 		//Register observers
 		registerObservers();
+	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		//Unregister receiver
+		unregisterReceiver(syncFinishedReceiver);
 	}
 
 	@Override
@@ -337,7 +384,7 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 	
 	private void onRefreshButton(){
 		//Respond by calling requestSync(). This is an asynchronous operation.
-		// Pass the settings flags by inserting them in a bundle
+		//Pass the settings flags by inserting them in a bundle
         Bundle settingsBundle = new Bundle();
         settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
         settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
@@ -350,9 +397,13 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
         
          //Request the sync for the default account, authority, and manual sync settings
         ContentResolver.requestSync(mAccount, Constants.AUTHORITY, settingsBundle);
+        
+        //Set progress
+        findViewById(R.id.action_refresh).setVisibility(View.GONE);
+        setProgressBarIndeterminateVisibility(true);
 	}
 	
-	/*private String getCurrentConferenceID(){
+	private String getCurrentConferenceID(){
 		String uuid = "";
 		Cursor c;
 		Uri uri = Uri.parse("content://" + Constants.PROVIDER_NAME + "/conferences");
@@ -371,7 +422,7 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		}
 		c.close();
 		return uuid;
-	}*/
+	}
 	
 	/**
      * Create a new dummy account for the sync adapter
@@ -380,7 +431,7 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
      */
     public Account CreateSyncAccount(Context context) {
         // Create the account type and default account
-        Account newAccount = new Account(Constants.ACCOUNT, Constants.ACCOUNT_TYPE);
+        Account newAccount = new Account(Constants.ACCOUNT_NAME, Constants.ACCOUNT_TYPE);
         // Get an instance of the Android account manager
         AccountManager accountManager = (AccountManager) context.getSystemService(ACCOUNT_SERVICE);
         /*
@@ -427,4 +478,20 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
     	ContentResolver resolver = getContentResolver();
     	resolver.unregisterContentObserver(observer);
     }
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putInt("lastFragment", lastFragment);
+		outState.putBoolean("isMenuOpen", isMenuOpen);
+	}
+
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		lastFragment = savedInstanceState.getInt("lastFragment");
+		isMenuOpen = savedInstanceState.getBoolean("isMenuOpen");
+	}
+    
+    
 }

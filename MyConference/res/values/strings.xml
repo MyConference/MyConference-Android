@@ -42,6 +42,6 @@
     <string name="link_icon">Icon</string>
     <string name="link_name">Name</string>
     <string name="link_description">Description</string>
-    <string name="link_empty">Loading&#8230;</string>
+    <string name="link_empty">No available documents</string>
 
 </resources>

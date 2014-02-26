@@ -11,11 +11,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 
 public class LinksFragment extends MyConferenceFragment{
 	
 	private ListView docList;
 	private Cursor docCursor;
+	private TextView docListEmpty;
 	public LinksFragment(){}
 
 	@SuppressLint("NewApi")
@@ -24,10 +26,15 @@ public class LinksFragment extends MyConferenceFragment{
 		final View rootView = inflater.inflate(R.layout.fragment_links, container, false);
 		
 		docList = (ListView) rootView.findViewById(R.id.links_list);
+		docListEmpty = (TextView) rootView.findViewById(R.id.links_list_empty);
 		getQuery();
-		LinksFragmentAdapter adapter = new LinksFragmentAdapter(getActivity(), docCursor, 0);
-		docList.setAdapter(adapter);
-		
+		if(docCursor.getCount() == 0){ //If cursor is empty show a message
+			docList.setVisibility(View.GONE);
+		} else {
+			docListEmpty.setVisibility(View.GONE);
+			LinksFragmentAdapter adapter = new LinksFragmentAdapter(getActivity(), docCursor, 0);
+			docList.setAdapter(adapter);
+		}
 		
 		return rootView;
 	}
@@ -42,7 +49,9 @@ public class LinksFragment extends MyConferenceFragment{
 			Constants.DOC_TYPE,
 			Constants.DOC_DATA
 		};
-		docCursor = getActivity().getContentResolver().query(uri, columns, null, null, null);
+		String where = Constants.CONF_UUID + " = ?";
+		String[] whereArgs = { getArguments().getString(Constants.CONF_UUID) };
+		docCursor = getActivity().getContentResolver().query(uri, columns, where, whereArgs, null);
 		//DEBUG
 		if(docCursor!=null){
 			if(docCursor.moveToFirst()){
