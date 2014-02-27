@@ -88,7 +88,7 @@ public class Register {
 				
 			} catch(JSONException e){
 				e.printStackTrace();
-				throw new Exception("Register error");
+				throw new Exception("Email duplicate");
 			}
 		} else {
 			throw new Exception("Register error");

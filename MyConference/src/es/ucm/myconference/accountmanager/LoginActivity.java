@@ -211,7 +211,7 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 
 			if(data.containsKey(Constants.ERROR_MSG)){
 				//Cannot login. Register the new account
-				//TODO: If yet registered, what? Asked Dani a question
+				//TODO: If yet registered, "invalid_email"
 				Register register = new Register(getBaseContext(), mEmail, mPassword);
 				try{
 					register.userRegisterAndLogin();
@@ -239,9 +239,14 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 			if (!intent.hasExtra(Constants.ERROR_MSG)) {
 				finish();
 			} else {
-				//mPasswordView.setError(getString(R.string.error_incorrect_password));
+				if(intent.getStringExtra(Constants.ERROR_MSG).startsWith("Email")){
+					//Email already existing. Wrong password
+					mPasswordView.requestFocus();
+					mPasswordView.setError(getString(R.string.error_incorrect_password));
+				} else {
+					
+				}
 				mEmailView.requestFocus();
-				mPasswordView.requestFocus();
 			}
 		}
 
