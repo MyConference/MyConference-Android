@@ -108,9 +108,9 @@ public class HomeActivity extends MyConferenceActivity {
 			public void onClick(View v) {
 				signInEmail = (EditText) findViewById(R.id.home_sign_in_email);
 				signInPass = (EditText) findViewById(R.id.home_sign_in_password);
-				Login login = new Login(getApplicationContext(), signInEmail.getText().toString(),
+				/*Login login = new Login(getApplicationContext(), signInEmail.getText().toString(),
 										signInPass.getText().toString(), HomeActivity.this);
-				login.login();
+				login.login();*/
 			}
 		});
 	}
@@ -160,9 +160,9 @@ public class HomeActivity extends MyConferenceActivity {
 			signUpWrongPass.setVisibility(View.GONE);
 			
 			// Request
-			 Register register = new Register(getApplicationContext(),signUpEmail.getText().toString(),
+			/* Register register = new Register(getApplicationContext(),signUpEmail.getText().toString(),
 			 									signUpPass.getText().toString(), this);
-			 register.register();
+			 register.register();*/
 			 
 		}
 	}

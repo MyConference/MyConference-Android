@@ -115,7 +115,7 @@ public class Login {
 			} catch (JSONException e) {
 				Toast.makeText(context, R.string.home_login_error, Toast.LENGTH_LONG).show();
 				e.printStackTrace();
-				throw new Exception("JSON error");
+				throw new Exception("Invalid email or password");
 			}
 		} else {
 			Toast.makeText(context, R.string.home_login_error, Toast.LENGTH_LONG).show();

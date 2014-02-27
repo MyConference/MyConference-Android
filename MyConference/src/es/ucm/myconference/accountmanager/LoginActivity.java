@@ -1,9 +1,11 @@
 package es.ucm.myconference.accountmanager;
 
 import es.ucm.myconference.Login;
+import es.ucm.myconference.NavigationDrawerActivity;
 import es.ucm.myconference.R;
 import es.ucm.myconference.Register;
 import es.ucm.myconference.util.Constants;
+import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
 import android.animation.Animator;
@@ -20,6 +22,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Activity which displays a login screen to the user, offering registration as
@@ -44,12 +47,16 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 	private TextView mLoginStatusMessageView;
 	
 	private AccountManager mAccountManager;
+	private String mAuthTokenType;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_login);
+		
+
+		mAuthTokenType = Constants.AUTHTOKEN_TYPE;
 
 		// Set up the login form.
 		mEmailView = (EditText) findViewById(R.id.email);
@@ -196,7 +203,7 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 			//Attempt authentication against a network service.
 			String authToken = null;
 			Bundle data = new Bundle();
-			Login login = new Login(getBaseContext(), mEmail, mPassword);
+			Login login = new Login(getApplicationContext(), mEmail, mPassword);
 			try {
 				authToken = login.userLogin();
 				
@@ -211,8 +218,7 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 
 			if(data.containsKey(Constants.ERROR_MSG)){
 				//Cannot login. Register the new account
-				//TODO: If yet registered, "invalid_email"
-				Register register = new Register(getBaseContext(), mEmail, mPassword);
+				Register register = new Register(getApplicationContext(), mEmail, mPassword);
 				try{
 					register.userRegisterAndLogin();
 
@@ -237,16 +243,15 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 			showProgress(false);
 
 			if (!intent.hasExtra(Constants.ERROR_MSG)) {
-				finish();
+				finishLogin(intent);
 			} else {
 				if(intent.getStringExtra(Constants.ERROR_MSG).startsWith("Email")){
 					//Email already existing. Wrong password
 					mPasswordView.requestFocus();
 					mPasswordView.setError(getString(R.string.error_incorrect_password));
 				} else {
-					
+					Toast.makeText(getApplicationContext(), R.string.home_login_error, Toast.LENGTH_SHORT).show();
 				}
-				mEmailView.requestFocus();
 			}
 		}
 
@@ -254,6 +259,31 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 		protected void onCancelled() {
 			mAuthTask = null;
 			showProgress(false);
+		}
+		
+		private void finishLogin(Intent intent){
+			String userEmail = intent.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+			String userPass = intent.getStringExtra(Constants.USER_PASS);
+			
+			final Account account = new Account(userEmail, 
+												intent.getStringExtra(AccountManager.KEY_ACCOUNT_TYPE));
+			if(getIntent().getBooleanExtra("ADDING_ACCOUNT", false)){
+				//New account
+				String authToken = intent.getStringExtra(AccountManager.KEY_AUTHTOKEN);
+				mAccountManager.addAccountExplicitly(null, userPass, null);
+		        // Not setting the auth token will cause another call to the server to authenticate the user
+				mAccountManager.setAuthToken(account, mAuthTokenType, authToken);
+			} else {
+				mAccountManager.setPassword(account, userPass);
+			}
+			//Return the information back to the Authenticator
+			setAccountAuthenticatorResult(intent.getExtras());
+			setResult(RESULT_OK, intent);
+			
+			//Redirect to NavigationDrawer activity
+			Intent i = new Intent(getApplicationContext(), NavigationDrawerActivity.class);
+			startActivity(i);
+			finish();
 		}
 	}
 }

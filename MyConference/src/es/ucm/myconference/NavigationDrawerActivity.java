@@ -88,7 +88,8 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		actionBar.setTitle("Menu");
 		
 		// Create the test account
-		mAccount = CreateSyncAccount(this);
+		//mAccount = CreateSyncAccount(this);
+		//TODO mAccount = ??
 
 		linear = (LinearLayout) findViewById(R.id.navigation_drawer_menu);
 		

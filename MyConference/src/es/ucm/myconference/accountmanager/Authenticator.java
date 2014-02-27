@@ -32,8 +32,8 @@ public class Authenticator extends AbstractAccountAuthenticator {
 		
 		final Intent intent = new Intent(context, LoginActivity.class);
 		intent.putExtra("ACCOUNT_TYPE", accountType);
-		//intent.putExtra("AUTHTOKEN_TYPE", authTokenType);
-		//intent.putExtra("ADDING_ACCOUNT", true);
+		intent.putExtra("AUTHTOKEN_TYPE", authTokenType);
+		intent.putExtra("ADDING_ACCOUNT", true);
 		intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
 		
 		final Bundle bundle = new Bundle();
@@ -54,7 +54,7 @@ public class Authenticator extends AbstractAccountAuthenticator {
             return result;
         }
         
-     // Extract the username and password from the Account Manager, and ask
+        // Extract the username and password from the Account Manager, and ask
         // the server for an appropriate AuthToken.
     	final AccountManager am = AccountManager.get(context);
     	String authToken = am.peekAuthToken(account, authTokenType);
