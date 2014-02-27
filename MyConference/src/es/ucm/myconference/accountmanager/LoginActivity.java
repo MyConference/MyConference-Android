@@ -209,9 +209,9 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 				data.putString(Constants.ERROR_MSG, e.getMessage());
 			}
 
-			if(data.containsKey(Constants.ERROR_MSG) && data.getString(Constants.ERROR_MSG).startsWith("")){
+			if(data.containsKey(Constants.ERROR_MSG)){
 				//Cannot login. Register the new account
-				//TODO: Not always. Check what error ocurred when login
+				//TODO: If yet registered, what? Asked Dani a question
 				Register register = new Register(getBaseContext(), mEmail, mPassword);
 				try{
 					register.userRegisterAndLogin();
@@ -239,8 +239,8 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 			if (!intent.hasExtra(Constants.ERROR_MSG)) {
 				finish();
 			} else {
-				mPasswordView
-						.setError(getString(R.string.error_incorrect_password));
+				//mPasswordView.setError(getString(R.string.error_incorrect_password));
+				mEmailView.requestFocus();
 				mPasswordView.requestFocus();
 			}
 		}
