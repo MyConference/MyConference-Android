@@ -11,11 +11,14 @@ import android.accounts.AccountManager;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
@@ -48,14 +51,22 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 	
 	private AccountManager mAccountManager;
 	private String mAuthTokenType;
+	private final String TAG = "LoginActivity";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		// If the user didn't logout before exit, keep him logged in
+		if(!getLogout()){
+			Intent i = new Intent(this, NavigationDrawerActivity.class);
+			startActivity(i);
+			finish();
+		}
+		
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_login);
 		
-
+		mAccountManager = AccountManager.get(getBaseContext());
 		mAuthTokenType = Constants.AUTHTOKEN_TYPE;
 
 		// Set up the login form.
@@ -205,10 +216,11 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 			Bundle data = new Bundle();
 			Login login = new Login(getApplicationContext(), mEmail, mPassword);
 			try {
+				Log.d(TAG, "login.userLogin()");
 				authToken = login.userLogin();
 				
 				data.putString(AccountManager.KEY_ACCOUNT_NAME, mEmail);
-				data.putString(AccountManager.KEY_ACCOUNT_TYPE, getIntent().getStringExtra("ACCOUNT_TYPE"));
+				data.putString(AccountManager.KEY_ACCOUNT_TYPE, Constants.ACCOUNT_TYPE);
 				data.putString(AccountManager.KEY_AUTHTOKEN, authToken);
 				data.putString(Constants.USER_PASS, mPassword);
 				
@@ -217,13 +229,16 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 			}
 
 			if(data.containsKey(Constants.ERROR_MSG)){
+				//Remove previous errors
+				data.remove(Constants.ERROR_MSG);
 				//Cannot login. Register the new account
 				Register register = new Register(getApplicationContext(), mEmail, mPassword);
 				try{
+					Log.d(TAG, "userRegisterAndLogin()");
 					register.userRegisterAndLogin();
 
 					data.putString(AccountManager.KEY_ACCOUNT_NAME, mEmail);
-					data.putString(AccountManager.KEY_ACCOUNT_TYPE, getIntent().getStringExtra("ACCOUNT_TYPE"));
+					data.putString(AccountManager.KEY_ACCOUNT_TYPE, Constants.ACCOUNT_TYPE);
 					data.putString(AccountManager.KEY_AUTHTOKEN, authToken);
 					data.putString(Constants.USER_PASS, mPassword);
 					
@@ -243,8 +258,10 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 			showProgress(false);
 
 			if (!intent.hasExtra(Constants.ERROR_MSG)) {
+				Log.d(TAG, "Login or Register ok");
 				finishLogin(intent);
 			} else {
+				Log.d(TAG, "Error while login or registering: " + intent.getStringExtra(Constants.ERROR_MSG));
 				if(intent.getStringExtra(Constants.ERROR_MSG).startsWith("Email")){
 					//Email already existing. Wrong password
 					mPasswordView.requestFocus();
@@ -267,15 +284,14 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 			
 			final Account account = new Account(userEmail, 
 												intent.getStringExtra(AccountManager.KEY_ACCOUNT_TYPE));
-			if(getIntent().getBooleanExtra("ADDING_ACCOUNT", false)){
-				//New account
-				String authToken = intent.getStringExtra(AccountManager.KEY_AUTHTOKEN);
-				mAccountManager.addAccountExplicitly(null, userPass, null);
-		        // Not setting the auth token will cause another call to the server to authenticate the user
-				mAccountManager.setAuthToken(account, mAuthTokenType, authToken);
-			} else {
-				mAccountManager.setPassword(account, userPass);
-			}
+			
+			Log.d(TAG, "Adding Account");
+			//Add account
+			String authToken = intent.getStringExtra(AccountManager.KEY_AUTHTOKEN);
+			mAccountManager.addAccountExplicitly(account, userPass, null);
+	        // Not setting the auth token will cause another call to the server to authenticate the user
+			mAccountManager.setAuthToken(account, mAuthTokenType, authToken);
+			
 			//Return the information back to the Authenticator
 			setAccountAuthenticatorResult(intent.getExtras());
 			setResult(RESULT_OK, intent);
@@ -285,5 +301,10 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 			startActivity(i);
 			finish();
 		}
+	}
+	
+	private Boolean getLogout(){
+		SharedPreferences user = getSharedPreferences("ACCESSPREFS", Context.MODE_PRIVATE);
+		return user.getBoolean(Constants.LOGOUT, true);
 	}
 }

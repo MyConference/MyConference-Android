@@ -8,6 +8,7 @@ public class Constants {
 	public static final String USER_ID = "id";
 	public static final String USER_URI = "uri";
 	public static final String USER_UUID = "uuid";
+	public static final String USER_NAME = "user_name";
 	public static final String USER_PASS = "USER_PASS";
 	
 	public final static String ACCESS_TOKEN = "access_token";

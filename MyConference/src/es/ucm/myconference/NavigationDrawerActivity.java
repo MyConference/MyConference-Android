@@ -46,15 +46,19 @@ import es.ucm.myconference.util.Data;
 
 public class NavigationDrawerActivity extends MyConferenceActivity {
 
+		private static final String TAG = "NavigationDrawerActivity";
+	
 		private ListView navigationDrawerList;
 		private DrawerLayout navigationDrawerLayout;
 		private ActionBar actionBar;
 		private ActionBarDrawerToggle navigationDrawerToggle;
 		private Spinner conferencesSpinner;
 		private LinearLayout linear;
+		//private Menu menu;
 		private Cursor slideMenuCursor;
 		private HashMap<String, String> conferencesList;
 	    private Account mAccount;
+	    private AccountManager mAccountManager;
 	    private Handler handler = new Handler();
 	    private DatabaseObserver observer = null;
 	    //SavedInstance
@@ -66,7 +70,8 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 			@Override
 			public void onReceive(Context context, Intent intent) {
 				setProgressBarIndeterminateVisibility(false);
-				findViewById(R.id.action_refresh).setVisibility(View.VISIBLE);
+				//MenuItem refresh = menu.findItem(R.id.action_refresh_button);
+		        //refresh.setVisible(false);
 				Log.d("Sync", "Sync finished");
 			}
 	    	
@@ -75,7 +80,7 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		Log.d("Inicio", "onCreate()");
+		Log.d(TAG, "onCreate()");
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.navigation_drawer_layout);
@@ -87,9 +92,11 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setTitle("Menu");
 		
-		// Create the test account
+		// Get the account
 		//mAccount = CreateSyncAccount(this);
-		//TODO mAccount = ??
+		mAccountManager = AccountManager.get(this);
+		getAccount();
+		
 
 		linear = (LinearLayout) findViewById(R.id.navigation_drawer_menu);
 		
@@ -167,6 +174,7 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		
 		//Load data for the first time 
 		if(isFirstTime()){
+			Log.d(TAG, "isFirstTime");
 			setFirstTime(false);
 			navigationDrawerLayout.openDrawer(linear);
 			onRefreshButton();
@@ -176,11 +184,19 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 	}
 
 	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getSupportMenuInflater();
+	    inflater.inflate(R.menu.home, menu);
+	    //this.menu = menu;
+	    return true;
+	}
+	
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// Pass the event to ActionBarDrawerToggle, if it returns
-        // true, then it has handled the app icon touch event
 		switch(item.getItemId()){
 			case android.R.id.home:
+				// Pass the event to ActionBarDrawerToggle, if it returns
+		        // true, then it has handled the app icon touch event
                 if (navigationDrawerLayout.isDrawerOpen(linear)) {
             			navigationDrawerLayout.closeDrawer(linear);
             			isMenuOpen = false;
@@ -200,9 +216,8 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 				finish();
 				return true;
 				
-			case R.id.action_refresh:
+			case R.id.action_refresh_button:
 				
-				Log.d("Refresh", "Refresh button pushed");
 				onRefreshButton();
 				return true;
 				
@@ -221,6 +236,11 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 	private String getUserId(){
 		SharedPreferences user = getSharedPreferences("ACCESSPREFS", Context.MODE_PRIVATE);
 		return user.getString(Constants.USER_ID, null);
+	}
+	
+	private String getUserName(){
+		SharedPreferences user = getSharedPreferences("ACCESSPREFS", Context.MODE_PRIVATE);
+		return user.getString(Constants.USER_NAME, null);
 	}
 	
 	private String getUserAccessToken(){
@@ -347,7 +367,7 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 
 	@Override
 	protected void onStart() {
-		Log.d("Start", "onStart()");
+		Log.d(TAG, "onStart()");
 		super.onStart();
 		//Register observers
 		registerObservers();
@@ -362,7 +382,7 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 
 	@Override
 	protected void onStop() {
-		Log.d("Stop", "onStop()");
+		Log.d(TAG, "onStop()");
 		super.onStop();
 		// Save SharedPreferences for keeping login
 		SharedPreferences preferences = this.getSharedPreferences("ACCESSPREFS", Context.MODE_PRIVATE);
@@ -375,15 +395,10 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		//Unregister observers
 		unregisterObservers();
 	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getSupportMenuInflater();
-	    inflater.inflate(R.menu.home, menu);
-	    return true;
-	}
 	
 	private void onRefreshButton(){
+
+		Log.d(TAG, "onRefreshButton()");
 		//Respond by calling requestSync(). This is an asynchronous operation.
 		//Pass the settings flags by inserting them in a bundle
         Bundle settingsBundle = new Bundle();
@@ -397,10 +412,12 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
         settingsBundle.putString(Constants.CONF_NAME, conferencesSpinner.getSelectedItem().toString()); 
         
          //Request the sync for the default account, authority, and manual sync settings
+        Log.d(TAG, "Account = " + mAccount.toString());
         ContentResolver.requestSync(mAccount, Constants.AUTHORITY, settingsBundle);
         
         //Set progress
-        findViewById(R.id.action_refresh).setVisibility(View.GONE);
+        //MenuItem refresh = menu.findItem(R.id.action_refresh_button);
+        //refresh.setVisible(false);
         setProgressBarIndeterminateVisibility(true);
 	}
 	
@@ -448,6 +465,21 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
              */
         	return mAccount;
         }
+    }
+    
+    public void getAccount(){
+    	final Account[] accounts = mAccountManager.getAccountsByType(Constants.ACCOUNT_TYPE);
+    	if(accounts.length == 1){
+    		mAccount = accounts[0];
+    	} else {
+    		String name[] = new String[accounts.length];
+    		String userName = getUserName();
+            for (int i = 1; i < accounts.length; i++) {
+                name[i] = accounts[i].name;
+                if(name[i].equals(userName))
+                	mAccount = accounts[i];
+            }
+    	}
     }
     
     private class DatabaseObserver extends ContentObserver{

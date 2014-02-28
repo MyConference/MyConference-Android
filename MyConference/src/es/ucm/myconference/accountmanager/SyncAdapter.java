@@ -66,7 +66,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 								SyncResult syncResult) {
 		//Put the data transfer code here.
 		
-		
 		//GET users/<uuid>/conferences
 		Log.d("sync", "GET users/"+extras.getString(Constants.USER_UUID)+"/conferences");
 		String result="";

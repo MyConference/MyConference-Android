@@ -42,7 +42,8 @@ public class SqlHelper extends SQLiteOpenHelper {
 		values.put(Constants.DOC_DESCRIPTION, "Un ejemplo de un archivo pdf");
 		values.put(Constants.DOC_TYPE, "pdf");
 		values.put(Constants.DOC_DATA, "Lo que sea");
-		db.insert(Constants.DATABASE_TABLE_DOCS, null, values);
+		long rowID = db.insert(Constants.DATABASE_TABLE_DOCS, null, values);
+		Log.d("Table2", "Inserted new document? " + rowID);
 		
 		String createVenues = "CREATE TABLE IF NOT EXISTS " + Constants.DATABASE_TABLE_VENUES +
 						" (" + Constants._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + 

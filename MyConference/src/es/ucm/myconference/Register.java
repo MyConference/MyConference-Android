@@ -22,15 +22,13 @@ public class Register {
 	private static final String BASE_URL = "http://myconf-api-dev.herokuapp.com/auth/signup";
 	private String email, password;
 	private Context context;
-	//private Activity activity;
 	
 	private String authToken;
 	
-	public Register(Context context, String email, String password){ //, Activity activity){
+	public Register(Context context, String email, String password){
 		this.context = context;
 		this.email = email;
 		this.password = password;
-		//this.activity = activity;
 	}
 	
 	public String userRegisterAndLogin() throws Exception{
@@ -103,52 +101,4 @@ public class Register {
 		
 		return authToken;
 	}
-	
-	/*public void register(){
-		// Request
-		new RegisterAsyncTask().execute(BASE_URL);
-	}
-	
-	private class RegisterAsyncTask extends AsyncTask<String, Void, String>{
-
-		@Override
-		protected String doInBackground(String... params) {
-			try{
-				return userRegister(params[0]);
-			} catch(Exception e){
-				e.printStackTrace();
-				return null;
-			}
-		}
-		
-		@Override
-		protected void onPreExecute() {
-			activity.setProgressBarIndeterminateVisibility(true);
-		}
-
-		@Override
-		protected void onPostExecute(String result) {
-			activity.setProgressBarIndeterminateVisibility(false);
-			if(result!=null){				
-				// Save user (id and uri) in SharedPreferences
-				try{
-					JSONObject jsonObj = new JSONObject(result).getJSONObject("user");
-					SharedPreferences preference = context.getSharedPreferences("USERPREFS", Context.MODE_PRIVATE);
-					SharedPreferences.Editor editor = preference.edit();
-					
-					editor.putString(Constants.USER_ID,jsonObj.getString(Constants.USER_ID));
-					editor.putString(Constants.USER_URI,jsonObj.getString(Constants.USER_URI));
-					
-					editor.commit();
-					Log.d("user", result);
-					Toast.makeText(context, R.string.home_register_ok, Toast.LENGTH_LONG).show();
-					
-				} catch(JSONException e){
-					Toast.makeText(context, R.string.home_register_error, Toast.LENGTH_LONG).show();
-					e.printStackTrace();
-				}
-			} else Toast.makeText(context, R.string.home_register_error, Toast.LENGTH_LONG).show();
-		}
-	}*/
-
 }
