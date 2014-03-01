@@ -34,7 +34,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
-
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
@@ -90,10 +89,9 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		actionBar = getSupportActionBar();
 		actionBar.setHomeButtonEnabled(true);
 		actionBar.setDisplayHomeAsUpEnabled(true);
-		actionBar.setTitle("Menu");
+		actionBar.setTitle(getResources().getStringArray(R.array.drawer_options)[lastFragment]);
 		
 		// Get the account
-		//mAccount = CreateSyncAccount(this);
 		mAccountManager = AccountManager.get(this);
 		getAccount();
 		
@@ -110,16 +108,12 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		
 		navigationDrawerList.setAdapter(new SimpleCursorAdapter(this, R.layout.drawer_menu_item,
 											slideMenuCursor, from, to, 0));
+		navigationDrawerList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		
 		navigationDrawerList.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?>  parent, View view, int position, long id) {
-				// Highlight the selected item and close drawer
-                navigationDrawerList.setItemChecked(position, true);
-        		navigationDrawerLayout.closeDrawer(linear);
-        		isMenuOpen = false;
-                
 				displayFragment(position);
 			}
 		});
@@ -133,8 +127,8 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 
 			@Override
 			public void onDrawerClosed(View drawerView) {
-				 actionBar.setTitle(getResources().getString(R.string.app_name));
-				 invalidateOptionsMenu(); //TODO Remove action items that are contextual to the main content
+				 actionBar.setTitle(getResources().getStringArray(R.array.drawer_options)[lastFragment]);
+				 invalidateOptionsMenu(); //Calls onPrepareOptionsMenu()
 				 isMenuOpen = false;
 			}
 	
@@ -182,6 +176,15 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		
 		
 	}
+
+	
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		//Remove action items that are contextual to the main content
+		menu.findItem(R.id.action_refresh_button).setVisible(isMenuOpen);
+		return super.onPrepareOptionsMenu(menu);
+	}
+
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -330,6 +333,12 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
         	FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         	fragmentTransaction.replace(R.id.main_layout, fragment);
         	fragmentTransaction.commit();
+        	
+        	// Highlight the selected item and close drawer
+            navigationDrawerList.setItemChecked(position, true);
+            navigationDrawerList.setSelection(position);
+    		navigationDrawerLayout.closeDrawer(linear);
+    		isMenuOpen = false;
         }
         lastFragment = position;
         
@@ -441,31 +450,6 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		c.close();
 		return uuid;
 	}
-	
-	/**
-     * Create a new dummy account for the sync adapter
-     *
-     * @param context The application context
-     */
-    public Account CreateSyncAccount(Context context) {
-        // Create the account type and default account
-        Account newAccount = new Account(Constants.ACCOUNT_NAME, Constants.ACCOUNT_TYPE);
-        // Get an instance of the Android account manager
-        AccountManager accountManager = (AccountManager) context.getSystemService(ACCOUNT_SERVICE);
-        /*
-         * Add the account and account type, no password or user data
-         * If successful, return the Account object, otherwise report an error.
-         */
-        if (accountManager.addAccountExplicitly(newAccount, null, null)) {
-           return newAccount;
-        } else {
-            /*
-             * The account exists or some other error occurred. Log this, report it,
-             * or handle it internally.
-             */
-        	return mAccount;
-        }
-    }
     
     public void getAccount(){
     	final Account[] accounts = mAccountManager.getAccountsByType(Constants.ACCOUNT_TYPE);

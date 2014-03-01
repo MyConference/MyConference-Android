@@ -43,5 +43,6 @@
     <string name="link_name">Name</string>
     <string name="link_description">Description</string>
     <string name="link_empty">No available documents</string>
+    <string name="link_no_data">No URL attached</string>
 
 </resources>

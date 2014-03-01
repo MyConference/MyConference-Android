@@ -3,6 +3,7 @@ package es.ucm.myconference;
 import es.ucm.myconference.util.Constants;
 import es.ucm.myconference.util.LinksFragmentAdapter;
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,8 +11,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class LinksFragment extends MyConferenceFragment{
 	
@@ -35,6 +39,21 @@ public class LinksFragment extends MyConferenceFragment{
 			LinksFragmentAdapter adapter = new LinksFragmentAdapter(getActivity(), docCursor, 0);
 			docList.setAdapter(adapter);
 		}
+		docList.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				String dir = "";
+				if(docCursor.moveToPosition(position)){
+					dir = docCursor.getString(5);
+					Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(dir));
+					startActivity(intent);
+				} else {
+					Toast.makeText(getActivity(), getResources().getString(R.string.link_no_data),
+									Toast.LENGTH_SHORT).show();
+				}
+			}
+		});
 		
 		return rootView;
 	}

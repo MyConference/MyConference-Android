@@ -37,11 +37,11 @@ public class SqlHelper extends SQLiteOpenHelper {
 		Log.d("Table2", "Documents table created");
 
 		ContentValues values = new ContentValues();
-		values.put(Constants.CONF_UUID, "176d32ed-4541-4066-8a1d-f3b7e1969152");
+		values.put(Constants.CONF_UUID, "7d6e088e-d23f-4141-a88e-a52a17b0f30a");
 		values.put(Constants.DOC_TITLE, "Prueba.pdf");
 		values.put(Constants.DOC_DESCRIPTION, "Un ejemplo de un archivo pdf");
 		values.put(Constants.DOC_TYPE, "pdf");
-		values.put(Constants.DOC_DATA, "Lo que sea");
+		values.put(Constants.DOC_DATA, "http://pic.sjtu.edu.cn/index.htm");
 		long rowID = db.insert(Constants.DATABASE_TABLE_DOCS, null, values);
 		Log.d("Table2", "Inserted new document? " + rowID);
 		
