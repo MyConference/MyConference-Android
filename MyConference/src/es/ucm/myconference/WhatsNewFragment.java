@@ -12,6 +12,7 @@ public class WhatsNewFragment extends MyConferenceFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		final View rootView = inflater.inflate(R.layout.fragment_whats_new, container, false);
+		rootView.setBackgroundColor(getResources().getColor(R.color.light_green));
 		return rootView;
 	}
 	

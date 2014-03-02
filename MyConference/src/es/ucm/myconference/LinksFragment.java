@@ -28,6 +28,7 @@ public class LinksFragment extends MyConferenceFragment{
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		final View rootView = inflater.inflate(R.layout.fragment_links, container, false);
+		rootView.setBackgroundColor(getResources().getColor(R.color.light_green));
 		
 		docList = (ListView) rootView.findViewById(R.id.links_list);
 		docListEmpty = (TextView) rootView.findViewById(R.id.links_list_empty);

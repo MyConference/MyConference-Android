@@ -56,6 +56,7 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		//private Menu menu;
 		private Cursor slideMenuCursor;
 		private HashMap<String, String> conferencesList;
+		private String confUUID;
 	    private Account mAccount;
 	    private AccountManager mAccountManager;
 	    private Handler handler = new Handler();
@@ -127,9 +128,9 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 
 			@Override
 			public void onDrawerClosed(View drawerView) {
-				 actionBar.setTitle(getResources().getStringArray(R.array.drawer_options)[lastFragment]);
-				 invalidateOptionsMenu(); //Calls onPrepareOptionsMenu()
-				 isMenuOpen = false;
+				actionBar.setTitle(getResources().getStringArray(R.array.drawer_options)[lastFragment]);
+				invalidateOptionsMenu(); //Calls onPrepareOptionsMenu()
+				isMenuOpen = false;
 			}
 	
 			@Override
@@ -307,16 +308,21 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 
         Fragment fragment = null;
         Bundle args = null;
+        getCurrentConferenceID();
         switch(position){
         	case 0:
         		fragment = new WhatsNewFragment();
         		break;
         	case 4:
         		fragment = new VenuesFragment();
+        		args = new Bundle();
+        		args.putString(Constants.CONF_UUID, confUUID);
+        		fragment.setArguments(args);
+        		break;
         	case 6:
         		fragment = new LinksFragment();
         		args = new Bundle();
-        		args.putString(Constants.CONF_UUID, getCurrentConferenceID());
+        		args.putString(Constants.CONF_UUID, confUUID);
         		fragment.setArguments(args);
         		break;
         	case 7:
@@ -430,8 +436,7 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
         setProgressBarIndeterminateVisibility(true);
 	}
 	
-	private String getCurrentConferenceID(){
-		String uuid = "";
+	private void getCurrentConferenceID(){
 		Cursor c;
 		Uri uri = Uri.parse("content://" + Constants.PROVIDER_NAME + "/conferences");
 		String[] columns = new String[] {
@@ -444,11 +449,10 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		c = getContentResolver().query(uri, columns, where, whereArgs, null);
 		if(c != null){
 			if(c.moveToFirst()){
-				uuid = c.getString(1);
+				confUUID = c.getString(1);
 			}
 		}
 		c.close();
-		return uuid;
 	}
     
     public void getAccount(){

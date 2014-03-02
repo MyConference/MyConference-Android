@@ -52,6 +52,15 @@ public class SqlHelper extends SQLiteOpenHelper {
 						Constants.VENUE_DETAILS + " TEXT);";
 		db.execSQL(createVenues);
 		Log.d("Table3", "Venues table created");
+		
+		ContentValues valuesVenues = new ContentValues();
+		valuesVenues.put(Constants.CONF_UUID, "7d6e088e-d23f-4141-a88e-a52a17b0f30a");
+		valuesVenues.put(Constants.VENUE_NAME, "Mingya Hotel Shanghai");
+		valuesVenues.put(Constants.VENUE_LATITUDE, 31.225394428808613);
+		valuesVenues.put(Constants.VENUE_LONGITUDE, 121.47675279999999);
+		valuesVenues.put(Constants.VENUE_DETAILS, "500 Gushan Road Pudong, District Shanghai, China");
+		rowID = db.insert(Constants.DATABASE_TABLE_VENUES, null, valuesVenues);
+		Log.d("Table3", "Inserted new venue? " + rowID);
 	}
 
 	@Override

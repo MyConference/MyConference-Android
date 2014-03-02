@@ -44,5 +44,11 @@
     <string name="link_description">Description</string>
     <string name="link_empty">No available documents</string>
     <string name="link_no_data">No URL attached</string>
+    
+    <!-- AboutFragment -->
+    <string name="about_image_caption">Image</string>
+    
+    <!-- VenuesFragment -->
+    <string name="venue_no_map">Unable to open map</string>
 
 </resources>

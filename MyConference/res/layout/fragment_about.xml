@@ -12,10 +12,18 @@
         android:text="@string/about_title"
         android:textSize="20sp"
         android:textStyle="bold"/>
+    
+    <ImageView 
+        android:id="@+id/about_image"
+        android:layout_below="@id/about_title"
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/about_image_caption"/>
          
      <TextView 
         android:id="@+id/about"
-        android:layout_below="@id/about_title"
+        android:layout_below="@id/about_image"
         android:padding="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
