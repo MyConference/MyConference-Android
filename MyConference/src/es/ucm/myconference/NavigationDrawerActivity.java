@@ -278,10 +278,11 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		if(list.isEmpty()){
 			list.add("Loading...");
 		}
-		
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, 
-																list);
-		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,
+																	list);
+		//ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.spinner_list_item, 
+		//														R.id.spinner_item, list);
+		//adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		conferencesSpinner.setAdapter(adapter);		
 	}
 	
@@ -312,6 +313,9 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
         switch(position){
         	case 0:
         		fragment = new WhatsNewFragment();
+        		break;
+        	case 2:
+        		fragment = new CommitteeFragment();
         		break;
         	case 4:
         		fragment = new VenuesFragment();

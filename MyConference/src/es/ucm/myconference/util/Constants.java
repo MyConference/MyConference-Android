@@ -37,7 +37,7 @@ public class Constants {
     
     //Provider
     public static String DB_NAME = "myconference.db";
-    public static int DB_VERSION = 3;
+    public static int DB_VERSION = 4;
     
     //Database
     public static final String PROVIDER_NAME = "es.ucm.myconference";
@@ -58,10 +58,18 @@ public class Constants {
     
     public static final String DATABASE_TABLE_VENUES = "venues";
     public static final Uri CONTENT_URI_VENUES = Uri.parse("content://" + PROVIDER_NAME + "/venues");
-    public static final String VENUE_NAME = "venue_name";
-    public static final String VENUE_LATITUDE = "venue_lat";
-    public static final String VENUE_LONGITUDE = "venue_lng";
-    public static final String VENUE_DETAILS = "venue_details";
+    public static final String VENUE_NAME = "name";
+    public static final String VENUE_LATITUDE = "lat";
+    public static final String VENUE_LONGITUDE = "lng";
+    public static final String VENUE_DETAILS = "details";
     public static final int VENUES = 5;
     public static final int VENUES_ID = 6;
+    
+    public static final String DATABASE_TABLE_ANNOUNCEMENTS = "announcements";
+    public static final Uri CONTENT_URI_ANNOUNCEMENTS = Uri.parse("content://" + PROVIDER_NAME + "/announcements");
+    public static final String ANNOUNCEMENT_TITLE = "title";
+    public static final String ANNOUNCEMENT_BODY = "body";
+    public static final String ANNOUNCEMENT_DATE = "date";
+    public static final int ANNOUNCEMENTS = 7;
+    public static final int ANNOUNCEMENTS_ID = 8;
 }

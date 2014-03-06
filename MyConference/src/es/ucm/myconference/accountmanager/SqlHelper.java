@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import es.ucm.myconference.util.Constants;
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -35,15 +34,6 @@ public class SqlHelper extends SQLiteOpenHelper {
 						Constants.DOC_DATA + " TEXT);";
 		db.execSQL(createDocs);
 		Log.d("Table2", "Documents table created");
-
-		ContentValues values = new ContentValues();
-		values.put(Constants.CONF_UUID, "7d6e088e-d23f-4141-a88e-a52a17b0f30a");
-		values.put(Constants.DOC_TITLE, "Prueba.pdf");
-		values.put(Constants.DOC_DESCRIPTION, "Un ejemplo de un archivo pdf");
-		values.put(Constants.DOC_TYPE, "pdf");
-		values.put(Constants.DOC_DATA, "http://pic.sjtu.edu.cn/index.htm");
-		long rowID = db.insert(Constants.DATABASE_TABLE_DOCS, null, values);
-		Log.d("Table2", "Inserted new document? " + rowID);
 		
 		String createVenues = "CREATE TABLE IF NOT EXISTS " + Constants.DATABASE_TABLE_VENUES +
 						" (" + Constants._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + 
@@ -53,14 +43,14 @@ public class SqlHelper extends SQLiteOpenHelper {
 		db.execSQL(createVenues);
 		Log.d("Table3", "Venues table created");
 		
-		ContentValues valuesVenues = new ContentValues();
-		valuesVenues.put(Constants.CONF_UUID, "7d6e088e-d23f-4141-a88e-a52a17b0f30a");
-		valuesVenues.put(Constants.VENUE_NAME, "Mingya Hotel Shanghai");
-		valuesVenues.put(Constants.VENUE_LATITUDE, 31.225394428808613);
-		valuesVenues.put(Constants.VENUE_LONGITUDE, 121.47675279999999);
-		valuesVenues.put(Constants.VENUE_DETAILS, "500 Gushan Road Pudong, District Shanghai, China");
-		rowID = db.insert(Constants.DATABASE_TABLE_VENUES, null, valuesVenues);
-		Log.d("Table3", "Inserted new venue? " + rowID);
+		String createAnnouncements = "CREATE TABLE IF NOT EXISTS " + Constants.DATABASE_TABLE_ANNOUNCEMENTS +
+						" (" + Constants._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + 
+						Constants.CONF_UUID + " TEXT, " + Constants.ANNOUNCEMENT_TITLE + " TEXT, " + 
+						Constants.ANNOUNCEMENT_BODY + " TEXT, " + Constants.ANNOUNCEMENT_DATE + 
+						" TEXT);";
+		db.execSQL(createAnnouncements);
+		Log.d("Table4", "Announcements table created");
+		
 	}
 
 	@Override
@@ -69,6 +59,7 @@ public class SqlHelper extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS " + Constants.DATABASE_TABLE_CONFS);
 		db.execSQL("DROP TABLE IF EXISTS " + Constants.DATABASE_TABLE_DOCS);
 		db.execSQL("DROP TABLE IF EXISTS " + Constants.DATABASE_TABLE_VENUES);
+		db.execSQL("DROP TABLE IF EXISTS " + Constants.DATABASE_TABLE_ANNOUNCEMENTS);
         // Create tables again
         onCreate(db);
 	}

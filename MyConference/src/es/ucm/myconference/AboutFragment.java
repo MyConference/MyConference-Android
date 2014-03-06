@@ -34,7 +34,11 @@ public class AboutFragment extends MyConferenceFragment {
 		}
 		
 		//Image TODO From database
-		image.setImageResource(R.drawable.pic2014);
+		if(name.equals("PIC 2014")){
+			image.setImageResource(R.drawable.pic2014);
+		} else {
+			image.setVisibility(View.GONE);
+		}
 		
 		return rootView;
 	}

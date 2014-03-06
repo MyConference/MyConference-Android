@@ -22,7 +22,9 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,10 +47,14 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 	// UI references.
 	private EditText mEmailView;
 	private EditText mPasswordView;
+	private EditText mRepeatPasswordView;
 	private View mLoginFormView;
 	private View mLoginStatusView;
 	private TextView mLoginStatusMessageView;
+	private TextView mNewRegister;
+	private Button mSignIn;
 	
+	private boolean login = true;
 	private AccountManager mAccountManager;
 	private String mAuthTokenType;
 	private final String TAG = "LoginActivity";
@@ -78,11 +84,44 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 					@Override
 					public boolean onEditorAction(TextView textView, int id,
 							KeyEvent keyEvent) {
-						if (id == R.id.login || id == EditorInfo.IME_NULL) {
-							attemptLogin();
-							return true;
+						if(login){
+							if (id == R.id.login || id == EditorInfo.IME_NULL) {
+								attemptLogin();
+								return true;
+							}
+							return false;
 						}
 						return false;
+					}
+				});
+		
+		mRepeatPasswordView = (EditText) findViewById(R.id.repeat_password);
+		mRepeatPasswordView
+				.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+					
+					@Override
+					public boolean onEditorAction(TextView v, int id, KeyEvent event) {
+						if(!login){
+							if (id == R.id.login || id == EditorInfo.IME_NULL) {
+								attemptLogin();
+								return true;
+							}
+							return false;
+						}
+						return false;
+					}
+				});
+		
+		mNewRegister = (TextView) findViewById(R.id.new_register);
+		mNewRegister
+				.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						login = false;
+						mRepeatPasswordView.setVisibility(View.VISIBLE);
+						mSignIn.setText(R.string.action_register);
+						mNewRegister.setVisibility(View.GONE);
 					}
 				});
 
@@ -90,7 +129,8 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 		mLoginStatusView = findViewById(R.id.login_status);
 		mLoginStatusMessageView = (TextView) findViewById(R.id.login_status_message);
 
-		findViewById(R.id.sign_in_button).setOnClickListener(
+		mSignIn = (Button) findViewById(R.id.sign_in_button);
+		mSignIn.setOnClickListener(
 				new View.OnClickListener() {
 					@Override
 					public void onClick(View view) {
@@ -136,6 +176,10 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 			mPasswordView.setError(getString(R.string.error_invalid_password));
 			focusView = mPasswordView;
 			cancel = true;
+		} else if (!login && !mRepeatPasswordView.getText().toString().equals(mPassword)){
+			mRepeatPasswordView.setError(getString(R.string.error_passwords_different));
+			focusView = mRepeatPasswordView;
+			cancel = true;
 		}
 
 		// Check for a valid email address.
@@ -156,7 +200,10 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 		} else {
 			// Show a progress spinner, and kick off a background task to
 			// perform the user login attempt.
-			mLoginStatusMessageView.setText(R.string.login_progress_signing_in);
+			if(login)
+				mLoginStatusMessageView.setText(R.string.login_progress_signing_in);
+			else
+				mLoginStatusMessageView.setText(R.string.login_progress_signing_up);
 			showProgress(true);
 			mAuthTask = new UserLoginTask();
 			mAuthTask.execute((Void) null);
@@ -214,24 +261,24 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 			//Attempt authentication against a network service.
 			String authToken = null;
 			Bundle data = new Bundle();
-			Login login = new Login(getApplicationContext(), mEmail, mPassword);
-			try {
-				Log.d(TAG, "login.userLogin()");
-				authToken = login.userLogin();
-				
-				data.putString(AccountManager.KEY_ACCOUNT_NAME, mEmail);
-				data.putString(AccountManager.KEY_ACCOUNT_TYPE, Constants.ACCOUNT_TYPE);
-				data.putString(AccountManager.KEY_AUTHTOKEN, authToken);
-				data.putString(Constants.USER_PASS, mPassword);
-				
-			} catch (Exception e) {
-				data.putString(Constants.ERROR_MSG, e.getMessage());
-			}
-
-			if(data.containsKey(Constants.ERROR_MSG)){
+			if(login){
+				Login login = new Login(getApplicationContext(), mEmail, mPassword);
+				try {
+					Log.d(TAG, "login.userLogin()");
+					authToken = login.userLogin();
+					
+					data.putString(AccountManager.KEY_ACCOUNT_NAME, mEmail);
+					data.putString(AccountManager.KEY_ACCOUNT_TYPE, Constants.ACCOUNT_TYPE);
+					data.putString(AccountManager.KEY_AUTHTOKEN, authToken);
+					data.putString(Constants.USER_PASS, mPassword);
+					
+				} catch (Exception e) {
+					data.putString(Constants.ERROR_MSG, e.getMessage());
+				}
+			} else {
 				//Remove previous errors
-				data.remove(Constants.ERROR_MSG);
-				//Cannot login. Register the new account
+				//data.remove(Constants.ERROR_MSG);
+				//Register the new account
 				Register register = new Register(getApplicationContext(), mEmail, mPassword);
 				try{
 					Log.d(TAG, "userRegisterAndLogin()");
@@ -263,11 +310,11 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 			} else {
 				Log.d(TAG, "Error while login or registering: " + intent.getStringExtra(Constants.ERROR_MSG));
 				if(intent.getStringExtra(Constants.ERROR_MSG).startsWith("Email")){
-					//Email already existing. Wrong password
-					mPasswordView.requestFocus();
-					mPasswordView.setError(getString(R.string.error_incorrect_password));
+					//Email already existing
+					mEmailView.requestFocus();
+					mEmailView.setError(getString(R.string.error_invalid_email));
 				} else {
-					Toast.makeText(getApplicationContext(), R.string.home_login_error, Toast.LENGTH_SHORT).show();
+					Toast.makeText(getApplicationContext(), R.string.error_general, Toast.LENGTH_SHORT).show();
 				}
 			}
 		}
