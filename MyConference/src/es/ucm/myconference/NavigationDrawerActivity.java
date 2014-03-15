@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -32,7 +31,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
@@ -77,7 +76,6 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 	    	
 	    };
 		
-	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		Log.d(TAG, "onCreate()");
@@ -129,14 +127,14 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 			@Override
 			public void onDrawerClosed(View drawerView) {
 				actionBar.setTitle(getResources().getStringArray(R.array.drawer_options)[lastFragment]);
-				invalidateOptionsMenu(); //Calls onPrepareOptionsMenu()
+				supportInvalidateOptionsMenu(); //Calls onPrepareOptionsMenu()
 				isMenuOpen = false;
 			}
 	
 			@Override
 			public void onDrawerOpened(View drawerView) {
 				actionBar.setTitle("Menu");
-                invalidateOptionsMenu();
+                supportInvalidateOptionsMenu();
                 isMenuOpen = true;
 			} 
 		};
@@ -280,6 +278,7 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		}
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,
 																	list);
+		//TODO Custom spinner
 		//ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.spinner_list_item, 
 		//														R.id.spinner_item, list);
 		//adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -313,6 +312,9 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
         switch(position){
         	case 0:
         		fragment = new WhatsNewFragment();
+        		args = new Bundle();
+        		args.putString(Constants.CONF_UUID, confUUID);
+        		fragment.setArguments(args);
         		break;
         	case 2:
         		fragment = new CommitteeFragment();

@@ -42,30 +42,30 @@ public class CommitteeFragment extends MyConferenceFragment {
 		headersList.add("Program Committee Members");
 		
 		List<String> general = new ArrayList<String>();
-		general.add("Kang Zhang(USA)");
-		general.add("Mengqi Zhou(China)");
-		general.add("Yinglin Wang(China)");
+		general.add("Kang Zhang (USA)");
+		general.add("Mengqi Zhou (China)");
+		general.add("Yinglin Wang (China)");
 		
 		List<String> organization = new ArrayList<String>();
-		organization.add("Yinglin Wang(China)");
-		organization.add("Jian Cao(China)");
+		organization.add("Yinglin Wang (China)");
+		organization.add("Jian Cao (China)");
 		
 		List<String> programChairs = new ArrayList<String>();
-		programChairs.add("Xuelong Li(China)");
-		programChairs.add("Jie Lu(Australia)");
+		programChairs.add("Xuelong Li (China)");
+		programChairs.add("Jie Lu (Australia)");
 		programChairs.add("Hongming Cai (China)");
-		programChairs.add("Yuan Luo(China)");
+		programChairs.add("Yuan Luo (China)");
 		
 		List<String> programMem = new ArrayList<String>();
-		programMem.add("Aarne Ranta(Sweden)");
-		programMem.add("Alfredo	Cuzzocrea(Italy)");
-		programMem.add("Alina Campan(US)");
-		programMem.add("Amin Chaabane(Canada)");
-		programMem.add("André Clouâtre(Canada)");
-		programMem.add("Andy Connor(New Zealand)");
-		programMem.add("Bin Wang(China)");
-		programMem.add("Bo Zhou(China)");
-		programMem.add("Chanchal K. Roy(Canada)");
+		programMem.add("Aarne Ranta (Sweden)");
+		programMem.add("Alfredo	Cuzzocrea (Italy)");
+		programMem.add("Alina Campan (US)");
+		programMem.add("Amin Chaabane (Canada)");
+		programMem.add("André Clouâtre (Canada)");
+		programMem.add("Andy Connor (New Zealand)");
+		programMem.add("Bin Wang (China)");
+		programMem.add("Bo Zhou (China)");
+		programMem.add("Chanchal K. Roy (Canada)");
 		
 		childList.put(headersList.get(0), general);
 		childList.put(headersList.get(1), organization);

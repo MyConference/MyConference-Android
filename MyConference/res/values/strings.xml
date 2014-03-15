@@ -29,5 +29,9 @@
     
     <!-- VenuesFragment -->
     <string name="venue_no_map">Unable to open map</string>
-
+    
+    <!-- WhatsNewFragment -->
+	<string name="announcement_title">Title</string>
+	<string name="announcement_body">Body</string>
+	<string name="announcement_date">Date</string>
 </resources>
