@@ -1,11 +1,22 @@
 package es.ucm.myconference;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+import es.ucm.myconference.R;
 import es.ucm.myconference.util.Constants;
 import es.ucm.myconference.util.VenuesFragmentAdapter;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +29,7 @@ public class VenuesFragment extends MyConferenceFragment {
 
 	private Cursor venueCursor;
 	private ListView venueList;
+	private GoogleMap venueMap;
 	public VenuesFragment(){}
 	
 	@Override
@@ -30,7 +42,7 @@ public class VenuesFragment extends MyConferenceFragment {
 		VenuesFragmentAdapter adapter = new VenuesFragmentAdapter(getActivity(), venueCursor, 0);
 		venueList.setAdapter(adapter);
 		
-		venueList.setOnItemClickListener(new OnItemClickListener() {
+		/*venueList.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -48,11 +60,25 @@ public class VenuesFragment extends MyConferenceFragment {
 			        }
 				}
 			}
-		});
+		});*/
+		
+		//Google Map
+		setUpMapIfNeeded();
 		
 		return rootView;
 	}
-	
+
+	@Override
+	public void onDestroyView() {
+		//Removing map fragment. If don't, when changing fragments and coming back, it crashes.
+		Fragment fragment = (getFragmentManager().findFragmentById(R.id.venues_map));
+		FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+		ft.remove(fragment);
+		ft.commit();
+		
+		super.onDestroyView();
+	}
+
 	private void getQuery(){
 		Uri uri = Uri.parse("content://" + Constants.PROVIDER_NAME + "/venues");
 		String[] columns = new String[] {
@@ -68,5 +94,41 @@ public class VenuesFragment extends MyConferenceFragment {
 		venueCursor = getActivity().getContentResolver().query(uri, columns, where, whereArgs, null);
 	}
 
+	 private void setUpMapIfNeeded() {
+        // Do a null check to confirm that we have not already instantiated the map.
+        if (venueMap == null) {
+            // Try to obtain the map from the SupportMapFragment.
+            venueMap = ((SupportMapFragment) getActivity().getSupportFragmentManager()
+            									.findFragmentById(R.id.venues_map)).getMap();
+            // Check if we were successful in obtaining the map.
+            if (venueMap != null) {
+                setUpMap();
+            }
+        }
+    }
+
+    private void setUpMap() {
+    	//Adding markers to every venue in the database
+    	if(venueCursor!=null){
+    		if(venueCursor.moveToFirst()){
+    			do{
+    				String name = venueCursor.getString(2);
+    				Float lat = venueCursor.getFloat(3);
+    				Float lng = venueCursor.getFloat(4);
+    				venueMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).title(name));
+    				venueCursor.moveToNext();
+    			} while(!venueCursor.isAfterLast());
+    		}
+    	}
+    	
+    	//TODO Se añadirá el pais en conference/<id>
+    	//Move map to city
+    	CameraPosition toCity = new CameraPosition.Builder()
+		.target(new LatLng(31.225394428, 121.4767527))
+		.zoom(10)
+		.build();
+    	venueMap.animateCamera(CameraUpdateFactory.newCameraPosition(toCity));
+    	
+    }
 	
 }
