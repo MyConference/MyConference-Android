@@ -124,7 +124,7 @@ public class VenuesFragment extends MyConferenceFragment {
     	//TODO Se añadirá el pais en conference/<id>
     	//Move map to city
     	CameraPosition toCity = new CameraPosition.Builder()
-		.target(new LatLng(31.225394428, 121.4767527))
+		.target(new LatLng(31.225394428, 121.4767527)) //Shangai
 		.zoom(10)
 		.build();
     	venueMap.animateCamera(CameraUpdateFactory.newCameraPosition(toCity));

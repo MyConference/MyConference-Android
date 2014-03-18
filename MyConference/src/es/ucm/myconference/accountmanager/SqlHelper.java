@@ -51,15 +51,25 @@ public class SqlHelper extends SQLiteOpenHelper {
 		db.execSQL(createAnnouncements);
 		Log.d("Table4", "Announcements table created");
 		
+		String createKeynotes = "CREATE TABLE IF NOT EXISTS " + Constants.DATABASE_TABLE_KEYNOTE +
+						" (" + Constants._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + 
+						Constants.CONF_UUID + " TEXT, " + Constants.KEYNOTES_NAME + " TEXT, " +
+						Constants.KEYNOTES_CHARGE + " TEXT, " + Constants.KEYNOTES_ORIGIN + " TEXT, " +
+						Constants.KEYNOTES_DESCRIPTION + " TEXT, " + Constants.KEYNOTES_PHOTO + " TEXT, " +
+						Constants.KEYNOTE_LINKS + " TEXT);";
+		db.execSQL(createKeynotes);
+		Log.d("Table5", "Keynotes table created");
+		
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		// Drop older table if existed
+		// Drop older table if existed TODO Dani me dijo algo de actualizar lo nuevo solo
 		db.execSQL("DROP TABLE IF EXISTS " + Constants.DATABASE_TABLE_CONFS);
 		db.execSQL("DROP TABLE IF EXISTS " + Constants.DATABASE_TABLE_DOCS);
 		db.execSQL("DROP TABLE IF EXISTS " + Constants.DATABASE_TABLE_VENUES);
 		db.execSQL("DROP TABLE IF EXISTS " + Constants.DATABASE_TABLE_ANNOUNCEMENTS);
+		db.execSQL("DROP TABLE IF EXISTS " + Constants.DATABASE_TABLE_KEYNOTE);
         // Create tables again
         onCreate(db);
 	}

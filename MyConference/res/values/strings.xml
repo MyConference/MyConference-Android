@@ -34,4 +34,11 @@
 	<string name="announcement_title">Title</string>
 	<string name="announcement_body">Body</string>
 	<string name="announcement_date">Date</string>
+	
+	<!-- KeynoteFragment -->
+	<string name="keynote_photo">Photo</string>
+	<string name="keynote_name">Name</string>
+	<string name="keynote_charge">Charge</string>
+	<string name="keynote_origin">Origin</string>
+	<string name="keynote_description">Description</string>
 </resources>

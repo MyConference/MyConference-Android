@@ -37,7 +37,7 @@ public class Constants {
     
     //Provider
     public static String DB_NAME = "myconference.db";
-    public static int DB_VERSION = 4;
+    public static int DB_VERSION = 5;
     
     //Database
     public static final String PROVIDER_NAME = "es.ucm.myconference";
@@ -72,4 +72,15 @@ public class Constants {
     public static final String ANNOUNCEMENT_DATE = "date";
     public static final int ANNOUNCEMENTS = 7;
     public static final int ANNOUNCEMENTS_ID = 8;
+    
+    public static final String DATABASE_TABLE_KEYNOTE = "keynotes";
+    public static final Uri CONTENT_URI_KEYNOTES = Uri.parse("content://" + PROVIDER_NAME + "/keynotes");
+    public static final String KEYNOTES_NAME = "name";
+    public static final String KEYNOTES_CHARGE = "charge";
+    public static final String KEYNOTES_ORIGIN = "origin";
+    public static final String KEYNOTES_DESCRIPTION = "description";
+    public static final String KEYNOTES_PHOTO = "photo";
+    public static final String KEYNOTE_LINKS = "links";
+    public static final int KEYNOTES = 9;
+    public static final int KEYNOTES_ID = 10;
 }
