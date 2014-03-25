@@ -59,6 +59,9 @@
         <activity 
             android:name="es.ucm.myconference.NavigationDrawerActivity" >
         </activity>
+        <activity 
+            android:name="es.ucm.myconference.KeynoteDescriptionActivity" >
+        </activity>
 
         <provider
             android:name="es.ucm.myconference.accountmanager.ConfsProvider"

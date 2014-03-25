@@ -282,7 +282,7 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 				Register register = new Register(getApplicationContext(), mEmail, mPassword);
 				try{
 					Log.d(TAG, "userRegisterAndLogin()");
-					register.userRegisterAndLogin();
+					authToken = register.userRegisterAndLogin();
 
 					data.putString(AccountManager.KEY_ACCOUNT_NAME, mEmail);
 					data.putString(AccountManager.KEY_ACCOUNT_TYPE, Constants.ACCOUNT_TYPE);

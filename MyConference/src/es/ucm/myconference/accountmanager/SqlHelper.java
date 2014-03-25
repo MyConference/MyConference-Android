@@ -60,6 +60,14 @@ public class SqlHelper extends SQLiteOpenHelper {
 		db.execSQL(createKeynotes);
 		Log.d("Table5", "Keynotes table created");
 		
+		String createCommittee = "CREATE TABLE IF NOT EXISTS " + Constants.DATABASE_TABLE_COMMITTEE +
+						" (" + Constants._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + 
+						Constants.CONF_UUID + " TEXT, " + Constants.COMMITTEE_NAME + " TEXT, " + 
+						Constants.COMMITTEE_ORIGIN + " TEXT, " + Constants.COMMITTEE_DETAILS + 
+						" TEXT, " + Constants.COMMITTEE_GROUP + " TEXT);";
+		db.execSQL(createCommittee);
+		Log.d("Table6", "Committee table created");
+		
 	}
 
 	@Override
@@ -70,6 +78,7 @@ public class SqlHelper extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS " + Constants.DATABASE_TABLE_VENUES);
 		db.execSQL("DROP TABLE IF EXISTS " + Constants.DATABASE_TABLE_ANNOUNCEMENTS);
 		db.execSQL("DROP TABLE IF EXISTS " + Constants.DATABASE_TABLE_KEYNOTE);
+		db.execSQL("DROP TABLE IF EXISTS " + Constants.DATABASE_TABLE_COMMITTEE);
         // Create tables again
         onCreate(db);
 	}

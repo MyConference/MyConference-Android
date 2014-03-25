@@ -37,6 +37,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 	private ContentResolver mContentResolver;
 	private Context context;
 	private String confIdForRequest = "";
+	private boolean errorBoolean = false;
 	private final static String CONFS_URL = "http://myconf-api-dev.herokuapp.com";
 	private final static String TAG = "SyncAdapter";
 
@@ -66,7 +67,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 	public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, 
 								SyncResult syncResult) {
 		//Put the data transfer code here.
-		
+		errorBoolean = false;
 		//GET users/<uuid>/conferences
 		Log.d("sync", "GET users/"+extras.getString(Constants.USER_UUID)+"/"+Constants.DATABASE_TABLE_CONFS);
 		String result="";
@@ -85,7 +86,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 		if(result!=null){
 			if(result.startsWith("{")){
 				Log.d("Error", "Something wrong happened");
-				//TODO Hacer algo. La respuesta no es un array
+				//res = {"code":"invalid_access", "message":""}
+				//Hay que volver a loguear enviando el refresh_token y devuelve todo lo del login
+				errorBoolean = true;
 			} else{
 			// Get conferences names into an Arraylist
 				try {
@@ -140,7 +143,10 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 		if(result != null){
 			if(result.startsWith("{\"code\"")){
 				Log.d("Error", "Something wrong happened");
-				//TODO Hacer algo. La respuesta no es la esperada
+				//res = {"code":"invalid_access", "message":""}
+				//Hay que volver a loguear enviando el refresh_token y devuelve todo lo del login
+				errorBoolean = true;
+				
 			} else {
 				try {
 					//Documents is an array inside the JSONObject 
@@ -209,6 +215,49 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 							Log.d(TAG, "Announcement insertion: " + ins);
 						}
 					}
+					
+					//Keynote speakers is an array
+					url = Uri.parse("content://"+Constants.PROVIDER_NAME+"/"+Constants.DATABASE_TABLE_KEYNOTE);
+					//Delete previous values
+					mContentResolver.delete(url, "1", null);
+					//Save data to provider
+					values = new ContentValues();
+					values.put(Constants.CONF_UUID, jsonData.getString("id"));
+					
+					JSONArray jsonSpeakers = jsonData.getJSONArray("speakers");
+					if(jsonSpeakers.length()!=0){
+						for(int i=0; i<jsonSpeakers.length(); i++){
+							JSONObject speaker = jsonSpeakers.getJSONObject(i);
+							values.put(Constants.KEYNOTES_NAME, speaker.getString(Constants.KEYNOTES_NAME));
+							values.put(Constants.KEYNOTES_CHARGE, speaker.getString(Constants.KEYNOTES_CHARGE));
+							values.put(Constants.KEYNOTES_ORIGIN, speaker.getString(Constants.KEYNOTES_ORIGIN));
+							values.put(Constants.KEYNOTES_DESCRIPTION, speaker.getString(Constants.KEYNOTES_DESCRIPTION));
+							//Links y foto nada por ahora
+							Uri ins = mContentResolver.insert(url, values);
+							Log.d(TAG, "Speaker insertion: " + ins);
+						}
+					}
+					
+					//TODO Committee is an array
+					url = Uri.parse("content://"+Constants.PROVIDER_NAME+"/"+Constants.DATABASE_TABLE_COMMITTEE);
+					//Delete previous values
+					mContentResolver.delete(url, "1", null);
+					//Save data to provider
+					values = new ContentValues();
+					values.put(Constants.CONF_UUID, jsonData.getString("id"));
+					
+					JSONArray jsonCommittee = jsonData.getJSONArray("organizers");
+					if(jsonCommittee.length()!=0){
+						for(int i=0;i<jsonCommittee.length(); i++){
+							JSONObject organizer = jsonCommittee.getJSONObject(i);
+							values.put(Constants.COMMITTEE_NAME, organizer.getString(Constants.COMMITTEE_NAME));
+							values.put(Constants.COMMITTEE_ORIGIN, organizer.getString(Constants.COMMITTEE_ORIGIN));
+							values.put(Constants.COMMITTEE_DETAILS, organizer.getString(Constants.COMMITTEE_DETAILS));
+							values.put(Constants.COMMITTEE_GROUP, organizer.getString("group"));
+							Uri ins = mContentResolver.insert(url, values);
+							Log.d(TAG, "Organizer insertion: "+ ins);
+						}
+					}
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
@@ -217,6 +266,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 		
 		//Broadcast that sync has finished
 		Intent intent = new Intent(Constants.SYNC_FINISHED);
+		intent.putExtra(Constants.AUTH_ERROR, errorBoolean);
 		context.sendBroadcast(intent);
 		
 	}

@@ -15,6 +15,7 @@ import android.content.SharedPreferences;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -72,6 +73,14 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 				//MenuItem refresh = menu.findItem(R.id.action_refresh_button);
 		        //refresh.setVisible(false);
 				Log.d("Sync", "Sync finished");
+				//If any error, it will be in the intent extra
+				boolean error = intent.getBooleanExtra(Constants.AUTH_ERROR, false);
+				if(error){
+					//Login with refresh_token - AsyncTask
+					LoginRefreshToken mAsyncTask = new LoginRefreshToken();
+					mAsyncTask.execute((Void) null);
+					onRefreshButton();
+				}
 			}
 	    	
 	    };
@@ -250,6 +259,11 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		return user.getString(Constants.ACCESS_TOKEN, null);
 	}
 	
+	private String getUserRefreshToken(){
+		SharedPreferences user = getSharedPreferences("ACCESSPREFS", Context.MODE_PRIVATE);
+		return user.getString(Constants.REFRESH_TOKEN, null);
+	}
+	
 	private void setLogoutFalse(){
 		SharedPreferences preferences = this.getSharedPreferences("ACCESSPREFS", Context.MODE_PRIVATE);
 		SharedPreferences.Editor editor = preferences.edit();
@@ -276,7 +290,7 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		if(list.isEmpty()){
 			list.add("Loading...");
 		}
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item,
 																	list);
 		//TODO Custom spinner
 		//ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.spinner_list_item, 
@@ -318,12 +332,24 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
         		break;
         	case 2:
         		fragment = new CommitteeFragment();
+        		args = new Bundle();
+        		args.putString(Constants.CONF_UUID, confUUID);
+        		fragment.setArguments(args);
+        		break;
+        	case 3:
+        		fragment = new KeynoteFragment();
+        		args = new Bundle();
+        		args.putString(Constants.CONF_UUID, confUUID);
+        		fragment.setArguments(args);
         		break;
         	case 4:
         		fragment = new VenuesFragment();
         		args = new Bundle();
         		args.putString(Constants.CONF_UUID, confUUID);
         		fragment.setArguments(args);
+        		break;	
+        	case 5:
+        		fragment = new TravelInfoFragment();
         		break;
         	case 6:
         		fragment = new LinksFragment();
@@ -520,5 +546,21 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		isMenuOpen = savedInstanceState.getBoolean("isMenuOpen");
 	}
     
-    
+    public class LoginRefreshToken extends AsyncTask<Void, Void, String>{
+
+		@Override
+		protected String doInBackground(Void... params) {
+			String refresh_token = getUserRefreshToken();
+			Login login = new Login(getApplicationContext(), refresh_token);
+			Log.d(TAG, "loginWithRefresh()");
+			String authToken = login.loginWithRefresh();
+			return authToken;
+		}
+
+		@Override
+		protected void onPostExecute(String authToken) {
+			mAccountManager.setAuthToken(mAccount, Constants.AUTHTOKEN_TYPE, authToken);
+		}
+
+    }
 }

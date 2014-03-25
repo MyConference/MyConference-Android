@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import es.ucm.myconference.util.CommitteeFragmentAdapter;
+import es.ucm.myconference.util.Constants;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,12 +19,16 @@ public class CommitteeFragment extends MyConferenceFragment {
 	private ExpandableListView committeeList;
 	private List<String> headersList;
 	private HashMap<String, List<String>> childList;
+	private Cursor committeeCursor;
 	public CommitteeFragment(){}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		final View rootView = inflater.inflate(R.layout.fragment_committee, container, false);
 		rootView.setBackgroundColor(getResources().getColor(R.color.light_green));
+		
+		headersList = new ArrayList<String>();
+		childList = new HashMap<String, List<String>>();
 		
 		committeeList = (ExpandableListView) rootView.findViewById(R.id.committee_exp_list);
 		getData();
@@ -32,45 +39,35 @@ public class CommitteeFragment extends MyConferenceFragment {
 	}
 	
 	private void getData(){
-		//TODO From database
-		headersList = new ArrayList<String>();
-		childList = new HashMap<String, List<String>>();
+		Uri uri = Uri.parse("content://" + Constants.PROVIDER_NAME + "/committee");
+		String[] columns = new String[] {
+			Constants._ID,
+			Constants.CONF_UUID,
+			Constants.COMMITTEE_NAME,
+			Constants.COMMITTEE_ORIGIN,
+			Constants.COMMITTEE_GROUP
+		};
+		String where = Constants.CONF_UUID + " = ?";
+		String[] whereArgs = { getArguments().getString(Constants.CONF_UUID) };
+		committeeCursor = getActivity().getContentResolver().query(uri, columns, where, whereArgs, null);
 		
-		headersList.add("General Conference Chairs");
-		headersList.add("Organization Chairs");
-		headersList.add("Program Committee Chairs");
-		headersList.add("Program Committee Members");
-		
-		List<String> general = new ArrayList<String>();
-		general.add("Kang Zhang (USA)");
-		general.add("Mengqi Zhou (China)");
-		general.add("Yinglin Wang (China)");
-		
-		List<String> organization = new ArrayList<String>();
-		organization.add("Yinglin Wang (China)");
-		organization.add("Jian Cao (China)");
-		
-		List<String> programChairs = new ArrayList<String>();
-		programChairs.add("Xuelong Li (China)");
-		programChairs.add("Jie Lu (Australia)");
-		programChairs.add("Hongming Cai (China)");
-		programChairs.add("Yuan Luo (China)");
-		
-		List<String> programMem = new ArrayList<String>();
-		programMem.add("Aarne Ranta (Sweden)");
-		programMem.add("Alfredo	Cuzzocrea (Italy)");
-		programMem.add("Alina Campan (US)");
-		programMem.add("Amin Chaabane (Canada)");
-		programMem.add("André Clouâtre (Canada)");
-		programMem.add("Andy Connor (New Zealand)");
-		programMem.add("Bin Wang (China)");
-		programMem.add("Bo Zhou (China)");
-		programMem.add("Chanchal K. Roy (Canada)");
-		
-		childList.put(headersList.get(0), general);
-		childList.put(headersList.get(1), organization);
-		childList.put(headersList.get(2), programChairs);
-		childList.put(headersList.get(3), programMem);
+		//Create lists for Adapter from Cursor
+		if(committeeCursor.moveToFirst()){
+			do {
+				String group = committeeCursor.getString(4);
+				if(!headersList.contains((String)group)){
+					headersList.add(group);
+					childList.put(group, new ArrayList<String>());
+				}
+				String name = committeeCursor.getString(2);
+				String origin = committeeCursor.getString(3);
+				String row = name + " (" + origin + ")";
+				List<String> auxiliar = childList.get(group);
+				auxiliar.add(row);
+				childList.put(group, auxiliar);
+				
+			} while(committeeCursor.moveToNext());
+		}
 	}
 
 }
