@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
@@ -37,7 +38,17 @@ public class KeynoteFragment extends MyConferenceFragment {
 			@Override
 			public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
 				// TODO Resize photo
-				return false;
+				ImageView photo = (ImageView) view.findViewById(R.id.keynote_photo);
+				if(photo!=null){
+					if(cursor.getString(2).startsWith("H")){
+						photo.setImageResource(R.drawable.h_fujita);
+					} else {
+						photo.setImageResource(R.drawable.d_roth);
+					}
+					return true;
+				} else {
+					return false;
+				}
 			}
 		};
 		adapter.setViewBinder(binder);

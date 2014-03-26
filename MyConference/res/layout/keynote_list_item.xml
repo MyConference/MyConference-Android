@@ -5,8 +5,8 @@
     
     <ImageView 
         android:id="@+id/keynote_photo"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_width="80dp"
+        android:layout_height="100dp"
         android:padding="4dp"
         android:contentDescription="@string/keynote_photo"/>
     
@@ -15,6 +15,7 @@
         android:layout_toRightOf="@id/keynote_photo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingLeft="4dp"
         android:text="@string/keynote_name"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textStyle="bold"/>
@@ -25,6 +26,7 @@
         android:layout_below="@id/keynote_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingLeft="4dp"
         android:text="@string/keynote_charge"
         android:textAppearance="?android:attr/textAppearanceMedium"/>
     
@@ -34,6 +36,7 @@
         android:layout_below="@id/keynote_charge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingLeft="4dp"
         android:text="@string/keynote_origin"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textStyle="italic"/>
