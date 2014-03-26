@@ -1,0 +1,23 @@
+<resources>
+
+    <string name="title_activity_login">Sign in</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="prompt_repeat_password">Repeat password</string>
+    <string name="action_sign_in_register"><b>Sign in</b> or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="action_register">Sign up</string>
+    <string name="action_forgot_password">Recover lost password</string>
+    <string name="login_progress_signing_in">Signing in&#8230;</string>
+    <string name="login_progress_signing_up">Signing up&#8230;</string>
+    <string name="error_invalid_email">This email address is invalid or duplicate</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_passwords_different">Password must be the same as above</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="if_new_register">If you\'re new, register here</string>
+    <string name="error_general">Some error occurred. Check your credentials</string>
+
+</resources>

@@ -5,25 +5,111 @@
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello World!</string>
     
-    <!-- Home layout -->
-    <string name="home_sign_up">Sign Up</string>
+    <!-- NavigationDrawerActivity -->
+    <string name="alert_title">Exit</string>
+    <string name="alert_text">Are you sure you want to exit?</string>
+    <string name="about_title">About PIC 2014</string>
+    <string name="about">No data</string>
+    <string name="drawer_menu_icon">Icon</string>
+    <string name="drawer_menu_item">Item</string>
     
-    <!-- Sign in layout -->
-    <string name="home_sign_in">Sign In</string>
-    <string name="home_email">Email</string>
-    <string name="home_password">Password</string>
-    <string name="home_forgot_password">Forgot your password?</string>
-    <string name="home_not_registered">If you\'re new, register here</string>
-    <string name="home_login">Login</string>
-    <string name="home_login_error">An error occurred. Check your credentials</string>
+    <!-- Settings Menu -->
+    <string name="action_logout">Logout</string>
+    <string name="action_refresh">Refresh</string>
     
-    <!-- Sign up layout -->
-    <string name="home_password_again">Confirm password</string>
-    <string name="home_registered">Already has account? Sign in here</string>
-    <string name="home_register">Register</string>
-    <string name="home_same_password">Passwords don\'t match</string>
-    <string name="home_password_length">Password must have 8 characters minimum</string>
-    <string name="home_register_error">Something went wrong. Try again</string>
-    <string name="home_register_ok">Successfully registered</string>
-
+    <!-- LinksFragment -->
+    <string name="link_icon">Icon</string>
+    <string name="link_name">Name</string>
+    <string name="link_description">Description</string>
+    <string name="link_empty">No available documents</string>
+    <string name="link_no_data">No URL attached</string>
+    
+    <!-- AboutFragment -->
+    <string name="about_image_caption">Image</string>
+    
+    <!-- VenuesFragment -->
+    <string name="venue_no_map">Unable to open map</string>
+    
+    <!-- WhatsNewFragment -->
+	<string name="announcement_title">Title</string>
+	<string name="announcement_body">Body</string>
+	<string name="announcement_date">Date</string>
+	
+	<!-- KeynoteFragment -->
+	<string name="keynote_photo">Photo</string>
+	<string name="keynote_name">Name</string>
+	<string name="keynote_charge">Charge</string>
+	<string name="keynote_origin">Origin</string>
+	<string name="keynote_description">Description</string>
+	
+	<!-- TravelInfoFragment -->
+	<string name="travel_text_1">Shanghai sits at the mouth of the Yangtze River, 
+	    the longest river in China. Though no match for the long history of Beijing and Xian, 
+	    yet Shanghai has a unique story to tell: starting from a fishing village opened up 1842, 
+	    Asia\'s leading city in the 1920s and 1930s dubbed as \"Paris of the East\", and today Shanghai
+	     has become one of the world\'s largest metropolitan cities,the largest economic and 
+	     transportation center in China. It best shows where China is headed in the 21th 
+	     century as well as a museum of East meeting West on Chinese soil.</string>
+	<string name="travel_text_2"><b>A Brief History</b>\n
+		About 6.000 years ago, the western part of today\'s Shanghai dried up
+		 into land and its eastern part became a piece of land about 2.000 years ago.\n
+		Shanghai began as Huating County, an administrative district established in 751 AD.
+		 The county, located in an area known today as Songjiang District, had its boundary 
+		 reaching today\'s Hongkou District in the north, Xiasha in the east and the coast in
+		  the south. In 991 AD, Shanghai Town was set up in the county.\n
+		During the 1260-1274 period, the town evolved into an important trading port. 
+		On August 19th, 1291 during the Yuan Dynasty (1271-1368), the then central government 
+		approved the establishment of Shanghai County in this area. Hence this day became the
+		 anniversary of the founding of the city of Shanghai.\n
+		In the 16th century (or the middle period of the Ming Dynasty), Shanghai became the 
+		national center of textile and handicraft industry. In 1685, Shanghai set up its first 
+		customs office. After the Opium War in the mid-19th century, Shanghai served as a major 
+		trading port and gateway to inland China. With invasion of the big powers from across 
+		the world, Shanghai was then turned into a semi-feudal and semi-colonial city for about 
+		100 year. On May 27, 1949, the People\'s Liberation Army of the Communist Party of China 
+		took control of Shanghai and since then Shanghai has undergone a historic transformation.</string>
+	<string name="travel_text_3"><b>Climate</b>\n
+		<p>Weather during November to April is the coldest and temperatures range between 
+		3.5oC to 13.7oC (38.3oF to 56.7oF). Weather in May, June, September and October 
+		is cooling, ranging between 18.6oC to 23.5oC (65.5oF to 74.3oF). Climate in July
+		 and August starts to turn hot and temperature can go up to 28oC (82.4oF) or above.</p></string>
+	<string name="travel_text_4"><b>Population</b>\n
+		<p>Due to constant inflow of people from other parts of the country, 
+		the population in Shanghai keeps growing. When Shanghai was turned into a city,
+		 it had only a population of less than 100,000. By the end of 2006, however, the city\'s 
+		 permanent residents had grown to nearly 13.7 million, or 1% of China\'s population. 
+		 In 2006, an average 2,157 permanent residents lived on each square kilometer of the city.</p></string>
+	<string name="travel_text_5"><b>Cultural and Historical Sites</b>\n
+		<p>By the end of 2006, Shanghai has 19 cultural and historical sites listed under the 
+		state protection and 165 under the city protection. A number of ancient sites and 
+		gardens dating back to Tang, Song, Yuan, Ming and Qing dynasties have been well preserved. 
+		Well-known sites include Yuyuan Garden, Longhua Temple, Jade Buddha Temple, Confucius Temple, 
+		and Zhujiajiao Ancient Water Town. Shanghai has also many precious relics and sites 
+		featuring its revolutionary history, such as the site of the first National Congress 
+		of the Communist Party of China, Residences of Dr. Sun Yat-sen, Mao Zedong, and Zhou Enlai.</p></string>
+	<string name="travel_text_6"><b>Tourist Scenes</b>\n
+		While Shanghai lacks the classical Chinese royal palaces, gardens and monuments of 
+		Beijing, its colonial legacy and international character give it a character of its own 
+		– a museum of East-meets-West and a mix of modernity and tradition. Modern Shanghai 
+		attracts the attention of the whole world. Visitors are flocking here, drawn by curiosity, 
+		a sense of possibility, the lure of potential professional and financial success, or perhaps 
+		simply a desire to be in one of the coolest, brashest, and most exciting cities in 
+		the new century. The most popular tourist scenes in Shanghai include the Bund, People\'s 
+		Square, Orient Pearl Broadcasting and Television Tower, Jin Mao Tower, Global Finance 
+		Center (which has a nickmane of bottle opener), and Shanghai Xintiandi.</string>
+	<string name="travel_text_7"><b>Food and Shopping</b>\n
+		Shanghai is also known as a paradise for eating and shopping. Shanghai\'s restaurants 
+		are among the finest to be found in China. There are more than 30,000 chain-store-style 
+		restaurants serving Chinese and Western-style food and delicacies from other Asian regions. 
+		The foreign-style restaurants feature food from more than 30 countries, including Italy, 
+		France, Japan, Portugal, and India while the Chinese ones feature food from more than 20 
+		regions of China. The famous restaurant areas are at the City God Temple area, Yunnan Road, 
+		Henan Road, Zhapu Road and Xianxia Road. For shopping buffs, Shanghai is known as \"the Oriental Paris\". 
+		Nanjing Road, Huaihai Road, Super Brand Mall, the Grand Gateway, Plaza 66 and Xujiahui Shopping 
+		Center are the top choices.</string>
+	<string name="travel_image_1">Image1</string>
+	<string name="travel_image_2">Image2</string>
+	<string name="travel_image_3">Image3</string>
+	<string name="travel_image_4">Image4</string>
+	<string name="travel_image_5">Image5</string>
 </resources>
