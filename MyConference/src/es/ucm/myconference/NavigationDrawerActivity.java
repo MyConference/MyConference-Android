@@ -62,7 +62,7 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 	    private Handler handler = new Handler();
 	    private DatabaseObserver observer = null;
 	    //SavedInstance
-	    private int lastFragment = 7;
+	    private int lastFragment = 0;
 	    private boolean isMenuOpen = false;
 	    //Receiver
 	    private BroadcastReceiver syncFinishedReceiver = new BroadcastReceiver(){
@@ -79,7 +79,7 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 					//Login with refresh_token - AsyncTask
 					LoginRefreshToken mAsyncTask = new LoginRefreshToken();
 					mAsyncTask.execute((Void) null);
-					onRefreshButton();
+					//onRefreshButton();
 				}
 			}
 	    	
@@ -97,7 +97,6 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		actionBar = getSupportActionBar();
 		actionBar.setHomeButtonEnabled(true);
 		actionBar.setDisplayHomeAsUpEnabled(true);
-		actionBar.setTitle(getResources().getStringArray(R.array.drawer_options)[lastFragment]);
 		
 		// Get the account
 		mAccountManager = AccountManager.get(this);
@@ -135,7 +134,8 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 
 			@Override
 			public void onDrawerClosed(View drawerView) {
-				actionBar.setTitle(getResources().getStringArray(R.array.drawer_options)[lastFragment]);
+				actionBar.setTitle(conferencesSpinner.getSelectedItem().toString()
+									+" - "+getResources().getStringArray(R.array.drawer_options)[lastFragment]);
 				supportInvalidateOptionsMenu(); //Calls onPrepareOptionsMenu()
 				isMenuOpen = false;
 			}
@@ -170,6 +170,9 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 			@Override
 			public void onNothingSelected(AdapterView<?> parent) {}
 		});
+		
+		actionBar.setTitle(conferencesSpinner.getSelectedItem().toString()
+				+" - "+getResources().getStringArray(R.array.drawer_options)[lastFragment]);
 
 		//Register observers
 		registerObservers();

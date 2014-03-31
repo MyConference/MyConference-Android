@@ -238,7 +238,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 						}
 					}
 					
-					//TODO Committee is an array
+					//Committee is an array
 					url = Uri.parse("content://"+Constants.PROVIDER_NAME+"/"+Constants.DATABASE_TABLE_COMMITTEE);
 					//Delete previous values
 					mContentResolver.delete(url, "1", null);

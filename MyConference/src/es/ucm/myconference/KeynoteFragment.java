@@ -42,8 +42,12 @@ public class KeynoteFragment extends MyConferenceFragment {
 				if(photo!=null){
 					if(cursor.getString(2).startsWith("H")){
 						photo.setImageResource(R.drawable.h_fujita);
-					} else {
+					} else if(cursor.getString(2).startsWith(" D")){
 						photo.setImageResource(R.drawable.d_roth);
+					} else if(cursor.getString(2).startsWith("V")){
+						photo.setImageResource(R.drawable.vlopez);
+					} else {
+						photo.setImageResource(R.drawable.gzhou);
 					}
 					return true;
 				} else {
@@ -62,6 +66,7 @@ public class KeynoteFragment extends MyConferenceFragment {
 					String descrp = keynoteCursor.getString(5);
 					Intent i = new Intent(getActivity(), KeynoteDescriptionActivity.class);
 					i.putExtra(Constants.KEYNOTES_DESCRIPTION, descrp);
+					i.putExtra("position", position);
 					startActivity(i);
 				}
 			}
