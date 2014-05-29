@@ -13,6 +13,7 @@ public final class Data {
 
 	private static long index = 0;
 	private static MatrixCursor slideMenu;
+	private static MatrixCursor programCursor;
 	
 	public static Cursor getSlideMenuCursor(String[] items){
 		if(slideMenu == null){
@@ -33,6 +34,35 @@ public final class Data {
 	
 	private static void slideMenuRow(String name, int icon){
 		slideMenu.addRow(new Object[] {++index, name, icon} );
+	}
+	
+	public static Cursor getProgramCursor(){
+		if(programCursor == null){
+			programCursor = new MatrixCursor(new String[] {"_id", "title", "description", "day", "start_time"});
+			
+			final String MAY_16 = "May, 16";
+			final String MAY_17 = "May, 17";
+			final String MAY_18 = "May, 18";
+			
+			programRow(
+					"Tutorial session", "At Shanghai University of Finance and Economics (see Conference Venue for address)",
+					MAY_16, "15:00~17:00");
+			programRow(
+					"Welcome and Opening Ceremony, the main conference and keynote speeches",
+					"At Golden Jade Sunshine Hotel (see Conference Venue for address)", MAY_17, "Morning");
+			programRow("Parallel sessions", "At Golden Jade Sunshine Hotel", MAY_17, "Afternoon");
+			programRow("Welcoming banquet", null, MAY_17, "Evening");
+			programRow("Parallel sessions", "At Golden Jade Sunshine Hotel", MAY_18, "Morning");
+			programRow("Sightseeing in Shanghai", null, MAY_18, "Afternoon");
+			programRow("Dinner and closing of PIC-2014", null, MAY_18, "Evening");
+			
+		}
+		
+		return programCursor;
+	}
+	
+	private static void programRow(String title, String descrp, String day, String time){
+		programCursor.addRow(new Object[] {++index, title, descrp, day, time});
 	}
 	
 	public static String inputStreamToString(InputStream inputStream){

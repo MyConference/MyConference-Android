@@ -2,9 +2,11 @@ package es.ucm.myconference;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import es.ucm.myconference.R;
@@ -15,14 +17,11 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 public class VenuesFragment extends MyConferenceFragment {
@@ -41,26 +40,6 @@ public class VenuesFragment extends MyConferenceFragment {
 		getQuery();
 		VenuesFragmentAdapter adapter = new VenuesFragmentAdapter(getActivity(), venueCursor, 0);
 		venueList.setAdapter(adapter);
-		
-		/*venueList.setOnItemClickListener(new OnItemClickListener() {
-
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				float lat, lng;
-				if(venueCursor.moveToPosition(position)){
-					lat = venueCursor.getFloat(3);
-					lng = venueCursor.getFloat(4);
-					Uri geo = Uri.parse("geo:" + lat + "," + lng + "?q=" + lat + "," + lng +
-												"(" + venueCursor.getString(2) + ")");
-					Intent intent = new Intent(Intent.ACTION_VIEW, geo);
-					if (getActivity().getPackageManager().queryIntentActivities(intent, 0).isEmpty()) {
-			            Toast.makeText(getActivity(), R.string.venue_no_map, Toast.LENGTH_SHORT).show();
-			        } else {
-			            startActivity(intent);
-			        }
-				}
-			}
-		});*/
 		
 		//Google Map
 		setUpMapIfNeeded();
@@ -129,6 +108,24 @@ public class VenuesFragment extends MyConferenceFragment {
 		.build();
     	venueMap.animateCamera(CameraUpdateFactory.newCameraPosition(toCity));
     	
+    	
+    	//When the user click on the info windows, Google Maps is opened
+    	venueMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
+			
+			@Override
+			public void onInfoWindowClick(Marker marker) {
+				LatLng latLng = marker.getPosition();
+				Uri geo = Uri.parse("geo:" + latLng.latitude + "," + latLng.longitude + 
+								"?q=" + latLng.latitude + "," + latLng.longitude + "(" + marker.getTitle()
+								+ ")");
+				Intent intent = new Intent(Intent.ACTION_VIEW, geo);
+				if (getActivity().getPackageManager().queryIntentActivities(intent, 0).isEmpty()) {
+					Toast.makeText(getActivity(), R.string.venue_no_map, Toast.LENGTH_SHORT).show();
+				} else {
+					startActivity(intent);
+				}
+			}
+		});
     }
 	
 }

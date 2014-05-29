@@ -1,9 +1,14 @@
 package es.ucm.myconference;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -12,6 +17,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.res.AssetManager;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
@@ -32,6 +38,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import com.actionbarsherlock.app.ActionBar;
@@ -59,11 +66,12 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		private String confUUID;
 	    private Account mAccount;
 	    private AccountManager mAccountManager;
+	    private FragmentManager mFragmentManager;
 	    private Handler handler = new Handler();
 	    private DatabaseObserver observer = null;
 	    //SavedInstance
-	    private int lastFragment = 0;
-	    private boolean isMenuOpen = false;
+	    private int lastFragment = 7;
+	    private boolean isMenuOpen = true;
 	    //Receiver
 	    private BroadcastReceiver syncFinishedReceiver = new BroadcastReceiver(){
 
@@ -80,6 +88,8 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 					LoginRefreshToken mAsyncTask = new LoginRefreshToken();
 					mAsyncTask.execute((Void) null);
 					//onRefreshButton();
+					Toast.makeText(getApplicationContext(), "Something went wrong. Refresh again", 
+								Toast.LENGTH_SHORT).show();
 				}
 			}
 	    	
@@ -162,9 +172,9 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 			public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
 				displayFragment(lastFragment);
 				if(isMenuOpen)
-					navigationDrawerLayout.openDrawer(linear);
-				else
 					navigationDrawerLayout.closeDrawer(linear);
+				else
+					navigationDrawerLayout.openDrawer(linear);
 			}
 
 			@Override
@@ -181,11 +191,11 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		if(isFirstTime()){
 			Log.d(TAG, "isFirstTime");
 			setFirstTime(false);
-			navigationDrawerLayout.openDrawer(linear);
 			onRefreshButton();
 		}
-		
-		
+
+		navigationDrawerLayout.openDrawer(linear);
+		isMenuOpen = true;
 	}
 
 	
@@ -291,7 +301,7 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		List<String> list = helper.getConfsNames();
 		// Fill the spinner with the list pass or if it's empty, with default list
 		if(list.isEmpty()){
-			list.add("Loading...");
+			list.add("No conferences");
 		}
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item,
 																	list);
@@ -333,6 +343,10 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
         		args.putString(Constants.CONF_UUID, confUUID);
         		fragment.setArguments(args);
         		break;
+        	case 1:
+        		//fragment = new CallPapersFragment();
+        		copyReadAssets();
+        		break;
         	case 2:
         		fragment = new CommitteeFragment();
         		args = new Bundle();
@@ -355,10 +369,11 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
         		fragment = new TravelInfoFragment();
         		break;
         	case 6:
-        		fragment = new LinksFragment();
+        		/*fragment = new LinksFragment();
         		args = new Bundle();
         		args.putString(Constants.CONF_UUID, confUUID);
-        		fragment.setArguments(args);
+        		fragment.setArguments(args);*/
+        		fragment = new ProgramFragment();
         		break;
         	case 7:
         		fragment = new AboutFragment();
@@ -370,9 +385,10 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
         }
         
         if(fragment!=null){
-        	FragmentManager fragmentManager = getSupportFragmentManager();
-        	FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        	mFragmentManager = getSupportFragmentManager();
+        	FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
         	fragmentTransaction.replace(R.id.main_layout, fragment);
+        	fragmentTransaction.addToBackStack(null);
         	fragmentTransaction.commit();
         	
         	// Highlight the selected item and close drawer
@@ -385,27 +401,77 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
         
 	}
 	
+	@SuppressLint("WorldReadableFiles")
+	@SuppressWarnings("deprecation")
+	private void copyReadAssets() {
+		Toast.makeText(getApplicationContext(), "Opening PDF file", Toast.LENGTH_SHORT).show();
+		
+		AssetManager assetManager = getAssets();
+
+        InputStream in = null;
+        OutputStream out = null;
+        File file = new File(getFilesDir(), "CFP.pdf");
+        try
+        {
+            in = assetManager.open("CFP.pdf");
+            out = openFileOutput(file.getName(), Context.MODE_WORLD_READABLE);
+
+            copyFile(in, out);
+            in.close();
+            in = null;
+            out.flush();
+            out.close();
+            out = null;
+            
+        } catch (Exception e)
+        {
+            Log.e(TAG, e.getMessage());
+        }
+
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(Uri.parse("file://" + getFilesDir() + "/CFP.pdf"),"application/pdf");
+
+        startActivity(intent);
+	}
+
+
+	private void copyFile(InputStream in, OutputStream out) throws IOException{
+		byte[] buffer = new byte[1024];
+        int read;
+        while ((read = in.read(buffer)) != -1)
+        {
+            out.write(buffer, 0, read);
+        }
+	}
+
+
 	@Override
 	public void onBackPressed() {
-		AlertDialog.Builder exit = new AlertDialog.Builder(NavigationDrawerActivity.this);
-		exit.setTitle(R.string.alert_title);
-		exit.setMessage(R.string.alert_text);
-		exit.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+		Log.d(TAG, "Stack length= "+mFragmentManager.getBackStackEntryCount());
+		if(mFragmentManager.getBackStackEntryCount() == 1){
+			AlertDialog.Builder exit = new AlertDialog.Builder(NavigationDrawerActivity.this);
+			exit.setTitle(R.string.alert_title);
+			exit.setMessage(R.string.alert_text);
+			exit.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					finish();
+				}
+			});
+			exit.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					// Nothing to do
+					dialog.cancel();
+				}
+			});
+			exit.show();
 			
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				NavigationDrawerActivity.super.onBackPressed();
-			}
-		});
-		exit.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-			
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				// Nothing to do
-				dialog.cancel();
-			}
-		});
-		exit.show();
+		} else {
+			super.onBackPressed();
+		}
 	}
 
 	@Override

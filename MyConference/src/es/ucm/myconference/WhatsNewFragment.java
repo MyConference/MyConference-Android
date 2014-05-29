@@ -79,7 +79,8 @@ public class WhatsNewFragment extends MyConferenceFragment {
 		};
 		String where = Constants.CONF_UUID + " = ?";
 		String[] whereArgs = { getArguments().getString(Constants.CONF_UUID) };
-		announcementCursor = getActivity().getContentResolver().query(uri, columns, where, whereArgs, null);
+		announcementCursor = getActivity().getContentResolver().query(uri, columns, where, whereArgs, 
+																		Constants._ID+" DESC");
 	}
 	
 	
