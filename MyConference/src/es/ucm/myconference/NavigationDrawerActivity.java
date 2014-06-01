@@ -64,13 +64,14 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		private Cursor slideMenuCursor;
 		private HashMap<String, String> conferencesList;
 		private String confUUID;
+		private String actualConfName;
 	    private Account mAccount;
 	    private AccountManager mAccountManager;
 	    private FragmentManager mFragmentManager;
 	    private Handler handler = new Handler();
 	    private DatabaseObserver observer = null;
 	    //SavedInstance
-	    private int lastFragment = 7;
+	    private int lastFragment = 8;
 	    private boolean isMenuOpen = true;
 	    //Receiver
 	    private BroadcastReceiver syncFinishedReceiver = new BroadcastReceiver(){
@@ -91,6 +92,10 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 					Toast.makeText(getApplicationContext(), "Something went wrong. Refresh again", 
 								Toast.LENGTH_SHORT).show();
 				}
+
+				//Select the actual conference
+				ArrayAdapter<String> adp = (ArrayAdapter<String>) conferencesSpinner.getAdapter();
+				conferencesSpinner.setSelection(adp.getPosition(actualConfName));
 			}
 	    	
 	    };
@@ -170,11 +175,13 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
-				displayFragment(lastFragment);
-				if(isMenuOpen)
+				//displayFragment(lastFragment);
+				/*if(isMenuOpen)
 					navigationDrawerLayout.closeDrawer(linear);
 				else
-					navigationDrawerLayout.openDrawer(linear);
+					navigationDrawerLayout.openDrawer(linear);*/
+				
+					mFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 			}
 
 			@Override
@@ -196,6 +203,7 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 
 		navigationDrawerLayout.openDrawer(linear);
 		isMenuOpen = true;
+    	mFragmentManager = getSupportFragmentManager();
 	}
 
 	
@@ -305,11 +313,11 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		}
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item,
 																	list);
-		//TODO Custom spinner
+		//TODO Custom spinner not working
 		//ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.spinner_list_item, 
 		//														R.id.spinner_item, list);
 		//adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		conferencesSpinner.setAdapter(adapter);		
+		conferencesSpinner.setAdapter(adapter);	
 	}
 	
 	public void setConferencesHashmap(){
@@ -324,15 +332,18 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		
 		cursor = getContentResolver().query(uri, columns, null, null, null);
 		if(cursor!=null){
-			while(cursor.moveToNext()){
-				conferencesList.put(cursor.getString(1), cursor.getString(2));
+			if(cursor.moveToFirst()){
+				do {
+					conferencesList.put(cursor.getString(1), cursor.getString(2));
+					cursor.moveToNext();
+				} while(!cursor.isAfterLast());
 			}
 		}
 		cursor.close();
 	}
 	
 	private void displayFragment(int position){
-
+		//TODO Muchos cambios
         Fragment fragment = null;
         Bundle args = null;
         getCurrentConferenceID();
@@ -344,8 +355,11 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
         		fragment.setArguments(args);
         		break;
         	case 1:
-        		//fragment = new CallPapersFragment();
-        		copyReadAssets();
+        		if(conferencesSpinner.getSelectedItem().toString().equals("PIC 2014")){
+        			copyReadAssets();
+        		} else {
+        			fragment = new CallPapersFragment();
+        		}
         		break;
         	case 2:
         		fragment = new CommitteeFragment();
@@ -357,6 +371,9 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
         		fragment = new KeynoteFragment();
         		args = new Bundle();
         		args.putString(Constants.CONF_UUID, confUUID);
+        		if(conferencesSpinner.getSelectedItem().toString().equals("PIC 2014")){
+        			args.putString(Constants.CONF_NAME, "PIC 2014");
+        		}
         		fragment.setArguments(args);
         		break;
         	case 4:
@@ -366,16 +383,29 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
         		fragment.setArguments(args);
         		break;	
         	case 5:
-        		fragment = new TravelInfoFragment();
+        		if(conferencesSpinner.getSelectedItem().toString().equals("PIC 2014")){
+	        		fragment = new TravelInfoFragment();
+	        		args = new Bundle();
+	        		args.putString(Constants.CONF_NAME, conferencesSpinner.getSelectedItem().toString());
+	        		fragment.setArguments(args);
+        		}
         		break;
         	case 6:
-        		/*fragment = new LinksFragment();
-        		args = new Bundle();
+            	fragment = new ProgramFragment();
+            	args = new Bundle();
         		args.putString(Constants.CONF_UUID, confUUID);
-        		fragment.setArguments(args);*/
-        		fragment = new ProgramFragment();
+        		if(conferencesSpinner.getSelectedItem().toString().equals("PIC 2014")){
+        			args.putString(Constants.CONF_NAME, "PIC 2014");
+        		}
+        		fragment.setArguments(args);
         		break;
         	case 7:
+        		fragment = new LinksFragment();
+        		args = new Bundle();
+        		args.putString(Constants.CONF_UUID, confUUID);
+        		fragment.setArguments(args);
+        		break;
+        	case 8:
         		fragment = new AboutFragment();
         		args = new Bundle();
         		args.putString(Constants.CONF_NAME, conferencesSpinner.getSelectedItem().toString());
@@ -448,7 +478,7 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 	@Override
 	public void onBackPressed() {
 		Log.d(TAG, "Stack length= "+mFragmentManager.getBackStackEntryCount());
-		if(mFragmentManager.getBackStackEntryCount() == 1){
+		if(mFragmentManager.getBackStackEntryCount() == 1 || mFragmentManager.getBackStackEntryCount() == 0){
 			AlertDialog.Builder exit = new AlertDialog.Builder(NavigationDrawerActivity.this);
 			exit.setTitle(R.string.alert_title);
 			exit.setMessage(R.string.alert_text);
@@ -476,9 +506,11 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 
 	@Override
 	protected void onResume() {
+		Log.d(TAG, "onResume()");
 		super.onResume();
 		//Register receiver for sync status
 		registerReceiver(syncFinishedReceiver, new IntentFilter(Constants.SYNC_FINISHED));
+		getAccount();
 	}
 
 	@Override
@@ -487,6 +519,8 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		super.onStart();
 		//Register observers
 		registerObservers();
+		getAccount();
+		displayFragment(lastFragment);
 	}
 	
 	@Override
@@ -525,10 +559,13 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
         //User's access token
         settingsBundle.putString(Constants.ACCESS_TOKEN, getUserAccessToken()); 
         //Current conference's id
-        settingsBundle.putString(Constants.CONF_NAME, conferencesSpinner.getSelectedItem().toString()); 
+        actualConfName = conferencesSpinner.getSelectedItem().toString();
+        settingsBundle.putString(Constants.CONF_NAME, actualConfName); 
         
          //Request the sync for the default account, authority, and manual sync settings
-        Log.d(TAG, "Account = " + mAccount.toString());
+        if(mAccount!=null)
+        	Log.d(TAG, "Account = " + mAccount.toString());
+        
         ContentResolver.requestSync(mAccount, Constants.AUTHORITY, settingsBundle);
         
         //Set progress
@@ -558,12 +595,13 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
     
     public void getAccount(){
     	final Account[] accounts = mAccountManager.getAccountsByType(Constants.ACCOUNT_TYPE);
+    	
     	if(accounts.length == 1){
     		mAccount = accounts[0];
     	} else {
     		String name[] = new String[accounts.length];
     		String userName = getUserName();
-            for (int i = 1; i < accounts.length; i++) {
+            for (int i = 0; i < accounts.length; i++) {
                 name[i] = accounts[i].name;
                 if(name[i].equals(userName))
                 	mAccount = accounts[i];
@@ -606,6 +644,7 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		super.onSaveInstanceState(outState);
 		outState.putInt("lastFragment", lastFragment);
 		outState.putBoolean("isMenuOpen", isMenuOpen);
+		outState.putString("actualConfName", actualConfName);
 	}
 
 	@Override
@@ -613,6 +652,7 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		super.onRestoreInstanceState(savedInstanceState);
 		lastFragment = savedInstanceState.getInt("lastFragment");
 		isMenuOpen = savedInstanceState.getBoolean("isMenuOpen");
+		actualConfName = savedInstanceState.getString("actualConfName");
 	}
     
     public class LoginRefreshToken extends AsyncTask<Void, Void, String>{

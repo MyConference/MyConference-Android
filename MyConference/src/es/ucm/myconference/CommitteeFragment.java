@@ -13,10 +13,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
+import android.widget.TextView;
 
 public class CommitteeFragment extends MyConferenceFragment {
 	
 	private ExpandableListView committeeList;
+	private TextView committeeListEmpty;
 	private List<String> headersList;
 	private HashMap<String, List<String>> childList;
 	private Cursor committeeCursor;
@@ -31,9 +33,15 @@ public class CommitteeFragment extends MyConferenceFragment {
 		childList = new HashMap<String, List<String>>();
 		
 		committeeList = (ExpandableListView) rootView.findViewById(R.id.committee_exp_list);
+		committeeListEmpty = (TextView) rootView.findViewById(R.id.committee_list_empty);
 		getData();
-		CommitteeFragmentAdapter adapter = new CommitteeFragmentAdapter(getActivity(), headersList, childList);
-		committeeList.setAdapter(adapter);
+		if(committeeCursor.getCount() == 0){
+			committeeList.setVisibility(View.GONE);
+		} else {
+			committeeListEmpty.setVisibility(View.GONE);
+			CommitteeFragmentAdapter adapter = new CommitteeFragmentAdapter(getActivity(), headersList, childList);
+			committeeList.setAdapter(adapter);
+		}
 		
 		return rootView;
 	}

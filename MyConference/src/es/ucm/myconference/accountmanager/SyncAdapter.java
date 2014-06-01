@@ -39,10 +39,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 	private String confIdForRequest = "";
 	private boolean errorBoolean = false;
 	private final static String CONFS_URL = "http://myconf-api-dev.herokuapp.com";
-	private final static String TAG = "SyncAdapter";
-
-	
-     // Set up the sync adapter
+	// Set up the sync adapter
 	public SyncAdapter(Context context, boolean autoInitialize) {
 		super(context, autoInitialize);
 		
@@ -111,8 +108,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 							if(confName.equals(extras.getString(Constants.CONF_NAME))){
 								confIdForRequest = confID;
 							}
-							Uri ins = mContentResolver.insert(url, values);
-							Log.d(TAG, "Conference insertion: " + ins);
+							mContentResolver.insert(url, values);
 						}
 					}
 					
@@ -169,8 +165,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 							values.put(Constants.DOC_DESCRIPTION, conf.getString(Constants.DOC_DESCRIPTION));
 							values.put(Constants.DOC_TYPE, conf.getString(Constants.DOC_TYPE));
 							values.put(Constants.DOC_DATA, conf.getString(Constants.DOC_DATA));
-							Uri ins = mContentResolver.insert(url, values);
-							Log.d(TAG, "Document insertion: " + ins);
+							mContentResolver.insert(url, values);
 						}
 					}
 					
@@ -191,8 +186,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 							values.put(Constants.VENUE_LATITUDE, location.getDouble(Constants.VENUE_LATITUDE));
 							values.put(Constants.VENUE_LONGITUDE, location.getDouble(Constants.VENUE_LONGITUDE));
 							values.put(Constants.VENUE_DETAILS, venue.getString(Constants.VENUE_DETAILS));
-							Uri ins = mContentResolver.insert(url, values);
-							Log.d(TAG, "Venue insertion: " + ins);
+							mContentResolver.insert(url, values);
 						}
 					}
 					
@@ -211,8 +205,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 							values.put(Constants.ANNOUNCEMENT_TITLE, announcement.getString(Constants.ANNOUNCEMENT_TITLE));
 							values.put(Constants.ANNOUNCEMENT_BODY, announcement.getString(Constants.ANNOUNCEMENT_BODY));
 							values.put(Constants.ANNOUNCEMENT_DATE, announcement.getString(Constants.ANNOUNCEMENT_DATE));
-							Uri ins = mContentResolver.insert(url, values);
-							Log.d(TAG, "Announcement insertion: " + ins);
+							mContentResolver.insert(url, values);
 						}
 					}
 					
@@ -232,9 +225,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 							values.put(Constants.KEYNOTES_CHARGE, speaker.getString(Constants.KEYNOTES_CHARGE));
 							values.put(Constants.KEYNOTES_ORIGIN, speaker.getString(Constants.KEYNOTES_ORIGIN));
 							values.put(Constants.KEYNOTES_DESCRIPTION, speaker.getString(Constants.KEYNOTES_DESCRIPTION));
-							//Links y foto nada por ahora
-							Uri ins = mContentResolver.insert(url, values);
-							Log.d(TAG, "Speaker insertion: " + ins);
+							values.put(Constants.KEYNOTES_PHOTO, speaker.getString(Constants.KEYNOTES_PHOTO));
+							//TODO Links nada por ahora
+							mContentResolver.insert(url, values);
 						}
 					}
 					
@@ -254,8 +247,26 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 							values.put(Constants.COMMITTEE_ORIGIN, organizer.getString(Constants.COMMITTEE_ORIGIN));
 							values.put(Constants.COMMITTEE_DETAILS, organizer.getString(Constants.COMMITTEE_DETAILS));
 							values.put(Constants.COMMITTEE_GROUP, organizer.getString("group"));
-							Uri ins = mContentResolver.insert(url, values);
-							Log.d(TAG, "Organizer insertion: "+ ins);
+							mContentResolver.insert(url, values);
+						}
+					}
+					
+					//Agenda is an array
+					url = Uri.parse("content://"+Constants.PROVIDER_NAME+"/"+Constants.DATABASE_TABLE_AGENDA);
+					//Delete previous values
+					mContentResolver.delete(url, "1", null);
+					//Save data to provider
+					values = new ContentValues();
+					values.put(Constants.CONF_UUID, jsonData.getString("id"));
+					
+					JSONArray jsonAgenda = jsonData.getJSONArray("agendaEvents");
+					if(jsonAgenda.length()!=0){
+						for(int i=0;i<jsonAgenda.length(); i++){
+							JSONObject event = jsonAgenda.getJSONObject(i);
+							values.put(Constants.AGENDA_TITLE, event.getString(Constants.AGENDA_TITLE));
+							values.put(Constants.AGENDA_DESCRIPTION, event.getString(Constants.AGENDA_DESCRIPTION));
+							values.put(Constants.AGENDA_DATE, event.getString(Constants.AGENDA_DATE));
+							mContentResolver.insert(url, values);
 						}
 					}
 				} catch (JSONException e) {

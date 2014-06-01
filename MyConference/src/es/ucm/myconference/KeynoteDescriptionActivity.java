@@ -1,6 +1,7 @@
 package es.ucm.myconference;
 
 import com.actionbarsherlock.app.ActionBar;
+import com.squareup.picasso.Picasso;
 
 import es.ucm.myconference.util.Constants;
 import es.ucm.myconference.util.SpeakersDescriptionHelper;
@@ -27,14 +28,19 @@ public class KeynoteDescriptionActivity extends MyConferenceActivity {
 		String text = i.getStringExtra(Constants.KEYNOTES_DESCRIPTION);
 		descrp.setText(text);
 		int position = i.getIntExtra("position", 0);
-		if(position==0){
-			photo.setImageResource(R.drawable.h_fujita);
-		} else if(position==1){
-			photo.setImageResource(R.drawable.d_roth);
-		} else if(position==2){
-			photo.setImageResource(R.drawable.gzhou);
+		if(i.getStringExtra(Constants.CONF_NAME) != null){
+			if(position==0){
+				photo.setImageResource(R.drawable.h_fujita);
+			} else if(position==1){
+				photo.setImageResource(R.drawable.d_roth);
+			} else if(position==2){
+				photo.setImageResource(R.drawable.gzhou);
+			} else {
+				photo.setImageResource(R.drawable.vlopez);
+			}
 		} else {
-			photo.setImageResource(R.drawable.vlopez);
+			String uri = i.getStringExtra(Constants.KEYNOTES_PHOTO);
+			Picasso.with(getApplicationContext()).load(uri).into(photo);
 		}
 		
 		Display display = getWindowManager().getDefaultDisplay();

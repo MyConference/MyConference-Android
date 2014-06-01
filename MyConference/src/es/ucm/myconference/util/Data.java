@@ -25,8 +25,9 @@ public final class Data {
 			slideMenuRow(items[3], R.drawable.ic_menu_speakers);
 			slideMenuRow(items[4], R.drawable.ic_menu_venue);
 			slideMenuRow(items[5], R.drawable.ic_menu_travel);
-			slideMenuRow(items[6], R.drawable.ic_menu_links);
-			slideMenuRow(items[7], R.drawable.ic_menu_about);
+			slideMenuRow(items[6], R.drawable.ic_menu_program);
+			slideMenuRow(items[7], R.drawable.ic_menu_links);
+			slideMenuRow(items[8], R.drawable.ic_menu_about);
 		}
 		
 		return slideMenu;

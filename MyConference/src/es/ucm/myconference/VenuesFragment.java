@@ -1,5 +1,8 @@
 package es.ucm.myconference;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
@@ -21,6 +24,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ListView;
 
@@ -29,6 +33,8 @@ public class VenuesFragment extends MyConferenceFragment {
 	private Cursor venueCursor;
 	private ListView venueList;
 	private GoogleMap venueMap;
+	private TextView venueListEmpty;
+	private List<Marker> markersList;
 	public VenuesFragment(){}
 	
 	@Override
@@ -37,12 +43,19 @@ public class VenuesFragment extends MyConferenceFragment {
 		rootView.setBackgroundColor(getResources().getColor(R.color.light_green));
 		
 		venueList = (ListView) rootView.findViewById(R.id.venues_list);
+		venueListEmpty = (TextView) rootView.findViewById(R.id.venues_list_empty);
+		markersList = new ArrayList<Marker>();
 		getQuery();
-		VenuesFragmentAdapter adapter = new VenuesFragmentAdapter(getActivity(), venueCursor, 0);
-		venueList.setAdapter(adapter);
-		
-		//Google Map
-		setUpMapIfNeeded();
+		if(venueCursor.getCount() == 0){
+			venueList.setVisibility(View.GONE);
+		} else {
+			venueListEmpty.setVisibility(View.GONE);
+			VenuesFragmentAdapter adapter = new VenuesFragmentAdapter(getActivity(), venueCursor, 0);
+			venueList.setAdapter(adapter);
+			
+			//Google Map
+			setUpMapIfNeeded();
+		}
 		
 		return rootView;
 	}
@@ -94,16 +107,16 @@ public class VenuesFragment extends MyConferenceFragment {
     				String name = venueCursor.getString(2);
     				Float lat = venueCursor.getFloat(3);
     				Float lng = venueCursor.getFloat(4);
-    				venueMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).title(name));
+    				markersList.add(venueMap.addMarker(
+    										new MarkerOptions().position(new LatLng(lat, lng)).title(name)));
     				venueCursor.moveToNext();
     			} while(!venueCursor.isAfterLast());
     		}
     	}
     	
-    	//TODO Se añadirá el pais en conference/<id>
     	//Move map to city
     	CameraPosition toCity = new CameraPosition.Builder()
-		.target(new LatLng(31.225394428, 121.4767527)) //Shangai
+    	.target(markersList.get(0).getPosition())
 		.zoom(10)
 		.build();
     	venueMap.animateCamera(CameraUpdateFactory.newCameraPosition(toCity));

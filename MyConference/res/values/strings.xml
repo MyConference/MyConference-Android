@@ -29,11 +29,13 @@
     
     <!-- VenuesFragment -->
     <string name="venue_no_map">Unable to open map</string>
+    <string name="venues_empty">No venues found</string>
     
     <!-- WhatsNewFragment -->
 	<string name="announcement_title">Title</string>
 	<string name="announcement_body">Body</string>
 	<string name="announcement_date">Date</string>
+	<string name="announcement_empty">No new announcements</string>
 	
 	<!-- KeynoteFragment -->
 	<string name="keynote_photo">Photo</string>
@@ -41,15 +43,19 @@
 	<string name="keynote_charge">Charge</string>
 	<string name="keynote_origin">Origin</string>
 	<string name="keynote_description">Description</string>
+	<string name="keynote_empty">No keynote speakers found</string>
 	
 	<!-- CallPapersFragment -->
-	<string name="papers_pdf">Click here to see it in a pdf file</string>
+	<string name="papers_pdf">No pdf file attached</string>
 	
 	<!-- ProgramFragment -->
 	<string name="program_day">Day</string>
     <string name="program_start_time">Start time</string>
     <string name="program_title">Title</string>
     <string name="program_description">Description</string>
+    
+    <!-- CommitteeFragment -->
+    <string name="committee_empty">No organising committee found</string>
 	
 	<!-- TravelInfoFragment -->
 	<string name="travel_text_1">Shanghai sits at the mouth of the Yangtze River, 

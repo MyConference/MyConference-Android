@@ -8,6 +8,14 @@
         android:id="@+id/committee_exp_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+    <TextView 
+        android:id="@+id/committee_list_empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:padding="4dp"
+        android:text="@string/committee_empty"
+        android:textAppearance="?android:attr/textAppearanceLarge"/>
     
 
 </LinearLayout>

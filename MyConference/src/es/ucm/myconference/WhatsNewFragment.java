@@ -20,6 +20,7 @@ import android.support.v4.widget.SimpleCursorAdapter;
 public class WhatsNewFragment extends MyConferenceFragment {
 
 	private ListView announcementList;
+	private TextView announcementListEmpty;
 	private Cursor announcementCursor;
 	
 	public WhatsNewFragment(){}
@@ -30,41 +31,48 @@ public class WhatsNewFragment extends MyConferenceFragment {
 		rootView.setBackgroundColor(getResources().getColor(R.color.light_green));
 		
 		announcementList = (ListView) rootView.findViewById(R.id.announcements_list);
+		announcementListEmpty = (TextView) rootView.findViewById(R.id.announcements_list_empty);
 		getQuery();
-		//Adapter
-		String[] from = new String[] {"title","body","date"};
-		int[] to = new int[] {R.id.announcement_title, R.id.announcement_body, R.id.announcement_date};
-		SimpleCursorAdapter adapter = new SimpleCursorAdapter(getActivity(), R.layout.whats_new_list_item,
-											announcementCursor, from, to, 0);
-		
-		SimpleCursorAdapter.ViewBinder binder = new SimpleCursorAdapter.ViewBinder() {
+		if(announcementCursor.getCount() == 0){
+			announcementList.setVisibility(View.GONE);
+		} else {
+			announcementListEmpty.setVisibility(View.GONE);
+			//Adapter
+			String[] from = new String[] {"title","body","date"};
+			int[] to = new int[] {R.id.announcement_title, R.id.announcement_body, R.id.announcement_date};
+			SimpleCursorAdapter adapter = new SimpleCursorAdapter(getActivity(), R.layout.whats_new_list_item,
+												announcementCursor, from, to, 0);
 			
-			@Override
-			public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
-				TextView announcement_date = (TextView) view.findViewById(R.id.announcement_date);
-				if(announcement_date!=null){
-					String date = cursor.getString(4);
-					String[] noHour = date.split("T");
-					SimpleDateFormat df  = new SimpleDateFormat("yyyy-MM-dd", Locale.ROOT);
-					Date parsedDate;
-					try {
-						parsedDate = df.parse(noHour[0]);
-						String dateToShow = new SimpleDateFormat("MMM dd, yyyy", Locale.ENGLISH).format(parsedDate);
-						Log.d("DATE", dateToShow);
-						announcement_date.setText(dateToShow);
-					} catch (ParseException e) {
-						// If an error occurs, put date as it comes
+			SimpleCursorAdapter.ViewBinder binder = new SimpleCursorAdapter.ViewBinder() {
+				
+				@Override
+				public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
+					TextView announcement_date = (TextView) view.findViewById(R.id.announcement_date);
+					if(announcement_date!=null){
+						String date = cursor.getString(4);
+						String[] noHour = date.split("T");
+						SimpleDateFormat df  = new SimpleDateFormat("yyyy-MM-dd", Locale.ROOT);
+						Date parsedDate;
+						try {
+							parsedDate = df.parse(noHour[0]);
+							String dateToShow = new SimpleDateFormat("MMM dd, yyyy", Locale.ENGLISH).format(parsedDate);
+							Log.d("DATE", dateToShow);
+							announcement_date.setText(dateToShow);
+						} catch (ParseException e) {
+							// If an error occurs, put date as it comes
+							return false;
+						}
+						return true;
+					} else {
+						Log.d("VIEW", "Is null");
 						return false;
 					}
-					return true;
-				} else {
-					Log.d("VIEW", "Is null");
-					return false;
 				}
-			}
-		};
-		adapter.setViewBinder(binder);
-		announcementList.setAdapter(adapter);
+			};
+			adapter.setViewBinder(binder);
+			announcementList.setAdapter(adapter);
+		}
+		
 		return rootView;
 	}
 	
@@ -82,7 +90,4 @@ public class WhatsNewFragment extends MyConferenceFragment {
 		announcementCursor = getActivity().getContentResolver().query(uri, columns, where, whereArgs, 
 																		Constants._ID+" DESC");
 	}
-	
-	
-
 }

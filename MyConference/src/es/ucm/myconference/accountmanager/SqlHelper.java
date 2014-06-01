@@ -68,6 +68,13 @@ public class SqlHelper extends SQLiteOpenHelper {
 		db.execSQL(createCommittee);
 		Log.d("Table6", "Committee table created");
 		
+		String createAgenda = "CREATE TABLE IF NOT EXISTS " + Constants.DATABASE_TABLE_AGENDA +
+						" (" + Constants._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+						Constants.CONF_UUID + " TEXT, " + Constants.AGENDA_TITLE + " TEXT, " +
+						Constants.AGENDA_DESCRIPTION + " TEXT, " + Constants.AGENDA_DATE + " TEXT);";
+		db.execSQL(createAgenda);
+		Log.d("Table7", "Agenda table created");
+		
 	}
 
 	@Override
@@ -79,6 +86,7 @@ public class SqlHelper extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS " + Constants.DATABASE_TABLE_ANNOUNCEMENTS);
 		db.execSQL("DROP TABLE IF EXISTS " + Constants.DATABASE_TABLE_KEYNOTE);
 		db.execSQL("DROP TABLE IF EXISTS " + Constants.DATABASE_TABLE_COMMITTEE);
+		db.execSQL("DROP TABLE IF EXISTS " + Constants.DATABASE_TABLE_AGENDA);
         // Create tables again
         onCreate(db);
 	}
@@ -88,10 +96,10 @@ public class SqlHelper extends SQLiteOpenHelper {
     	String query = "SELECT NAME FROM " + Constants.DATABASE_TABLE_CONFS;
     	SQLiteDatabase db = this.getWritableDatabase();
     	Cursor c = db.rawQuery(query, null);
-    	if (c.moveToFirst()) {
+    	if (c.moveToLast()) {
             do {
                 list.add(c.getString(0));
-            } while (c.moveToNext());
+            } while (c.moveToPrevious());
         }
     	c.close();
     	db.close();

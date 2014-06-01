@@ -29,6 +29,8 @@ public class ConfsProvider extends ContentProvider {
     	uriMatcher.addURI(Constants.PROVIDER_NAME, "keynotes/#", Constants.KEYNOTES_ID);
     	uriMatcher.addURI(Constants.PROVIDER_NAME, "committee", Constants.COMMITTEE);
     	uriMatcher.addURI(Constants.PROVIDER_NAME, "committee/#", Constants.COMMITTEE_ID);
+    	uriMatcher.addURI(Constants.PROVIDER_NAME, "agenda", Constants.AGENDA);
+    	uriMatcher.addURI(Constants.PROVIDER_NAME, "agenda/#", Constants.AGENDA_ID);
     }
     private SQLiteDatabase confsDB;
 	
@@ -67,6 +69,10 @@ public class ConfsProvider extends ContentProvider {
     		return "vnd.android.cursor.dir/vnd.ucm.myconference.committee";    	
     	case Constants.COMMITTEE_ID:
     		return "vnd.android.cursor.item/vnd.ucm.myconference.committee";
+    	case Constants.AGENDA:
+    		return "vnd.android.cursor.dir/vnd.ucm.myconference.agenda";    	
+    	case Constants.AGENDA_ID:
+    		return "vnd.android.cursor.item/vnd.ucm.myconference.agenda";
     	default:
 			throw new IllegalArgumentException("Unsupported URI: " + uri);
     	}
@@ -144,6 +150,17 @@ public class ConfsProvider extends ContentProvider {
 	    	if(sortOrder == null || sortOrder == "") sortOrder = Constants._ID;
     		break;
     		
+    	case Constants.AGENDA:
+    		sqlBuilder.setTables(Constants.DATABASE_TABLE_AGENDA);
+        	if(sortOrder == null || sortOrder == "") sortOrder = Constants._ID;
+    		break;
+    	
+    	case Constants.AGENDA_ID:
+    		sqlBuilder.setTables(Constants.DATABASE_TABLE_AGENDA);
+			sqlBuilder.appendWhere(Constants._ID + " = " + uri.getPathSegments().get(1));
+	    	if(sortOrder == null || sortOrder == "") sortOrder = Constants._ID;
+    		break;
+    		
     	default:
     		throw new IllegalArgumentException("Unknown URL " + uri);
     	}
@@ -207,6 +224,14 @@ public class ConfsProvider extends ContentProvider {
     		}
     		break;
     		
+    	case Constants.AGENDA:
+    		rowID = confsDB.insert(Constants.DATABASE_TABLE_AGENDA, "", values);
+    		if(rowID >0){
+    			_uri = ContentUris.withAppendedId(Constants.CONTENT_URI_AGENDA, rowID);
+    			getContext().getContentResolver().notifyChange(_uri, null);
+    		}
+    		break;
+    		
     	default: 
     		throw new SQLException("Failed to insert row into " + uri);
     	}
@@ -247,6 +272,11 @@ public class ConfsProvider extends ContentProvider {
 	    	getContext().getContentResolver().notifyChange(uri, null);
 	    	break;
 	    	
+    	case Constants.AGENDA:
+    		rows = confsDB.delete(Constants.DATABASE_TABLE_AGENDA, selection, selectionArgs);
+	    	getContext().getContentResolver().notifyChange(uri, null);
+	    	break;
+	    	
 	    default: 
 	    	throw new IllegalArgumentException("Unknown URL " + uri);
     	}
@@ -284,6 +314,11 @@ public class ConfsProvider extends ContentProvider {
 	    	
     	case Constants.COMMITTEE:
     		rows = confsDB.update(Constants.DATABASE_TABLE_COMMITTEE, values, selection, selectionArgs);
+	    	getContext().getContentResolver().notifyChange(uri, null);
+	    	break;
+	    	
+    	case Constants.AGENDA:
+    		rows = confsDB.update(Constants.DATABASE_TABLE_AGENDA, values, selection, selectionArgs);
 	    	getContext().getContentResolver().notifyChange(uri, null);
 	    	break;
 	    	

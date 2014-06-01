@@ -16,5 +16,14 @@
         android:layout_below="@id/venues_map"
         android:paddingTop="4dp" />
 	
+	<TextView 
+        android:id="@+id/venues_list_empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:padding="4dp"
+        android:text="@string/venues_empty"
+        android:textAppearance="?android:attr/textAppearanceLarge"/>
+	
 	
 </RelativeLayout>
