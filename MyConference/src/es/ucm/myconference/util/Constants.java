@@ -4,6 +4,7 @@ import android.net.Uri;
 
 public class Constants {
 
+    public static final String API_URL = "http://myconf-api-dev.herokuapp.com";
 	public static final String APP_ID = "514ab570-72e5-4512-9723-f496da08e13a";
 	public static final String USER_ID = "id";
 	public static final String USER_URI = "uri";

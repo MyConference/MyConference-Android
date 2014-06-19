@@ -20,7 +20,7 @@ import android.util.Log;
 
 public class Login {
 
-	private static final String BASE_URL = "http://myconf-api-dev.herokuapp.com/auth";
+	private static final String BASE_URL = Constants.API_URL + "/auth";
 	private static final String APP_ID = "514ab570-72e5-4512-9723-f496da08e13a";
 	private Context context;
 	private String email;

@@ -38,7 +38,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 	private Context context;
 	private String confIdForRequest = "";
 	private boolean errorBoolean = false;
-	private final static String CONFS_URL = "http://myconf-api-dev.herokuapp.com";
+	private final static String CONFS_URL = Constants.API_URL;
 	// Set up the sync adapter
 	public SyncAdapter(Context context, boolean autoInitialize) {
 		super(context, autoInitialize);

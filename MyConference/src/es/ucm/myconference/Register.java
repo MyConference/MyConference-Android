@@ -19,7 +19,7 @@ import android.util.Log;
 
 public class Register {
 	
-	private static final String BASE_URL = "http://myconf-api-dev.herokuapp.com/auth/signup";
+	private static final String BASE_URL = Constants.API_URL + "/auth/signup";
 	private String email, password;
 	private Context context;
 	
