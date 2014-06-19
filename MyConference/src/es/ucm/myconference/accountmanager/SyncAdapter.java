@@ -38,7 +38,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 	private Context context;
 	private String confIdForRequest = "";
 	private boolean errorBoolean = false;
-	private final static String CONFS_URL = "http://myconf-api-dev.herokuapp.com";
+	
 	// Set up the sync adapter
 	public SyncAdapter(Context context, boolean autoInitialize) {
 		super(context, autoInitialize);
@@ -70,7 +70,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 		String result="";
 		
 		HttpClient client = new DefaultHttpClient();
-		HttpGet request = new HttpGet(CONFS_URL+"/users/"+extras.getString(Constants.USER_UUID)+"/"+Constants.DATABASE_TABLE_CONFS);
+		HttpGet request = new HttpGet(Constants.CONFS_URL+"/users/"+extras.getString(Constants.USER_UUID)+"/"+Constants.DATABASE_TABLE_CONFS);
 		
 		// Include header
 		request.setHeader("Content-Type", "application/json");
@@ -126,7 +126,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 		Log.d("sync", "GET /"+Constants.DATABASE_TABLE_CONFS+"/" + confIdForRequest);
 		
 		client = new DefaultHttpClient();
-		request = new HttpGet(CONFS_URL+"/"+Constants.DATABASE_TABLE_CONFS+"/"+ confIdForRequest);
+		request = new HttpGet(Constants.CONFS_URL+"/"+Constants.DATABASE_TABLE_CONFS+"/"+ confIdForRequest);
 		
 		// Include header
 		request.setHeader("Content-Type", "application/json");
