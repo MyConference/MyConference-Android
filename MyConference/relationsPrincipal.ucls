@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<class-diagram version="1.1.6" icons="true" automaticImage="PNG" always-add-relationships="false" generalizations="true" 
+  realizations="true" associations="true" dependencies="false" nesting-relationships="true">  
+  <class id="1" language="java" name="es.ucm.myconference.NavigationDrawerActivity.DatabaseObserver" 
+    project="MyConference" file="/MyConference/src/es/ucm/myconference/NavigationDrawerActivity.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position x="677" y="342" width="131" height="53"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="2" language="java" name="es.ucm.myconference.AboutFragment" project="MyConference" 
+    file="/MyConference/src/es/ucm/myconference/AboutFragment.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position x="173" y="156" width="111" height="53"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="3" language="java" name="es.ucm.myconference.TravelInfoFragment" project="MyConference" 
+    file="/MyConference/src/es/ucm/myconference/TravelInfoFragment.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position x="324" y="156" width="133" height="53"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="4" language="java" name="es.ucm.myconference.Login" project="MyConference" 
+    file="/MyConference/src/es/ucm/myconference/Login.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position x="332" y="63" width="105" height="53"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="5" language="java" name="es.ucm.myconference.WhatsNewFragment" project="MyConference" 
+    file="/MyConference/src/es/ucm/myconference/WhatsNewFragment.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position x="497" y="156" width="140" height="53"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="6" language="java" name="es.ucm.myconference.MyConferenceActivity" project="MyConference" 
+    file="/MyConference/src/es/ucm/myconference/MyConferenceActivity.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position x="677" y="156" width="153" height="53"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="7" language="java" name="es.ucm.myconference.MyConferenceFragment" project="MyConference" 
+    file="/MyConference/src/es/ucm/myconference/MyConferenceFragment.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position x="943" y="63" width="160" height="53"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="8" language="java" name="es.ucm.myconference.VenuesFragment" project="MyConference" 
+    file="/MyConference/src/es/ucm/myconference/VenuesFragment.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position x="870" y="156" width="120" height="53"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="9" language="java" name="es.ucm.myconference.CallPapersFragment" project="MyConference" 
+    file="/MyConference/src/es/ucm/myconference/CallPapersFragment.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position x="1030" y="156" width="140" height="53"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="10" language="java" name="es.ucm.myconference.CommitteeFragment" project="MyConference" 
+    file="/MyConference/src/es/ucm/myconference/CommitteeFragment.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position x="1210" y="156" width="140" height="53"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="11" language="java" name="es.ucm.myconference.Register" project="MyConference" 
+    file="/MyConference/src/es/ucm/myconference/Register.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position x="694" y="83" width="-1" height="-1"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="12" language="java" name="es.ucm.myconference.KeynoteFragment" project="MyConference" 
+    file="/MyConference/src/es/ucm/myconference/KeynoteFragment.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position x="1390" y="156" width="124" height="53"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="13" language="java" name="es.ucm.myconference.SplashActivity" project="MyConference" 
+    file="/MyConference/src/es/ucm/myconference/SplashActivity.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position x="532" y="249" width="105" height="53"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="14" language="java" name="es.ucm.myconference.NavigationDrawerActivity.LoginRefreshToken" 
+    project="MyConference" file="/MyConference/src/es/ucm/myconference/NavigationDrawerActivity.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position x="848" y="342" width="134" height="53"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="15" language="java" name="es.ucm.myconference.KeynoteDescriptionActivity" project="MyConference" 
+    file="/MyConference/src/es/ucm/myconference/KeynoteDescriptionActivity.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position x="883" y="249" width="176" height="53"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="16" language="java" name="es.ucm.myconference.NavigationDrawerActivity" project="MyConference" 
+    file="/MyConference/src/es/ucm/myconference/NavigationDrawerActivity.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position x="677" y="249" width="166" height="53"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="17" language="java" name="es.ucm.myconference.ProgramFragment" project="MyConference" 
+    file="/MyConference/src/es/ucm/myconference/ProgramFragment.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position x="1703" y="156" width="128" height="53"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="18" language="java" name="es.ucm.myconference.LinksFragment" project="MyConference" 
+    file="/MyConference/src/es/ucm/myconference/LinksFragment.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position x="1554" y="156" width="109" height="53"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <generalization id="19">    
+    <end type="SOURCE" refId="15"/>    
+    <end type="TARGET" refId="6"/>  
+  </generalization>  
+  <generalization id="20">    
+    <end type="SOURCE" refId="10"/>    
+    <end type="TARGET" refId="7"/>  
+  </generalization>  
+  <generalization id="21">    
+    <end type="SOURCE" refId="17"/>    
+    <end type="TARGET" refId="7"/>  
+  </generalization>  
+  <generalization id="22">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="7"/>  
+  </generalization>  
+  <association id="23">    
+    <end type="SOURCE" refId="16" navigable="false">      
+      <attribute id="24" name="observer"/>      
+      <multiplicity id="25" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="1" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="26">    
+    <end type="SOURCE" refId="13"/>    
+    <end type="TARGET" refId="6"/>  
+  </generalization>  
+  <generalization id="27">    
+    <end type="SOURCE" refId="12"/>    
+    <end type="TARGET" refId="7"/>  
+  </generalization>  
+  <nesting id="28">    
+    <end type="SOURCE" refId="16"/>    
+    <end type="TARGET" refId="1"/>  
+  </nesting>  
+  <generalization id="29">    
+    <end type="SOURCE" refId="18"/>    
+    <end type="TARGET" refId="7"/>  
+  </generalization>  
+  <association id="30">    
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="31" name="activity"/>      
+      <multiplicity id="32" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="6" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="33">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="7"/>  
+  </generalization>  
+  <generalization id="34">    
+    <end type="SOURCE" refId="5"/>    
+    <end type="TARGET" refId="7"/>  
+  </generalization>  
+  <nesting id="35">    
+    <end type="SOURCE" refId="16"/>    
+    <end type="TARGET" refId="14"/>  
+  </nesting>  
+  <generalization id="36">    
+    <end type="SOURCE" refId="9"/>    
+    <end type="TARGET" refId="7"/>  
+  </generalization>  
+  <generalization id="37">    
+    <end type="SOURCE" refId="16"/>    
+    <end type="TARGET" refId="6"/>  
+  </generalization>  
+  <generalization id="38">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="7"/>  
+  </generalization>  
+  <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+    accessors="true" visibility="true">    
+    <attributes public="false" package="false" protected="false" private="false" static="false"/>    
+    <operations public="false" package="false" protected="false" private="false" static="false"/>  
+  </classifier-display>  
+  <association-display labels="true" multiplicity="true"/>
+</class-diagram>

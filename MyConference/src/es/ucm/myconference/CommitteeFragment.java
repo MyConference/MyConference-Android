@@ -69,7 +69,11 @@ public class CommitteeFragment extends MyConferenceFragment {
 				}
 				String name = committeeCursor.getString(2);
 				String origin = committeeCursor.getString(3);
-				String row = name + " (" + origin + ")";
+				String row;
+				if(origin.isEmpty())
+					row = name;
+				else
+					row = name + " (" + origin + ")";
 				List<String> auxiliar = childList.get(group);
 				auxiliar.add(row);
 				childList.put(group, auxiliar);

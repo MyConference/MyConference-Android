@@ -356,7 +356,7 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
         		break;
         	case 1:
         		if(conferencesSpinner.getSelectedItem().toString().equals("PIC 2014")){
-        			copyReadAssets();
+        			copyReadAssets(1);
         		} else {
         			fragment = new CallPapersFragment();
         		}
@@ -391,13 +391,18 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
         		}
         		break;
         	case 6:
-            	fragment = new ProgramFragment();
-            	args = new Bundle();
-        		args.putString(Constants.CONF_UUID, confUUID);
-        		if(conferencesSpinner.getSelectedItem().toString().equals("PIC 2014")){
-        			args.putString(Constants.CONF_NAME, "PIC 2014");
+        		if(conferencesSpinner.getSelectedItem().toString().equals("AIMS 2014")){
+        			copyReadAssets(2);
         		}
-        		fragment.setArguments(args);
+        		else {
+	            	fragment = new ProgramFragment();
+	            	args = new Bundle();
+	        		args.putString(Constants.CONF_UUID, confUUID);
+	        		if(conferencesSpinner.getSelectedItem().toString().equals("PIC 2014")){
+	        			args.putString(Constants.CONF_NAME, "PIC 2014");
+	        		}
+	        		fragment.setArguments(args);
+        		}
         		break;
         	case 7:
         		fragment = new LinksFragment();
@@ -433,17 +438,20 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 	
 	@SuppressLint("WorldReadableFiles")
 	@SuppressWarnings("deprecation")
-	private void copyReadAssets() {
+	private void copyReadAssets(int conf) { //1 = PIC, 2 = AIMS
 		Toast.makeText(getApplicationContext(), "Opening PDF file", Toast.LENGTH_SHORT).show();
 		
 		AssetManager assetManager = getAssets();
 
         InputStream in = null;
         OutputStream out = null;
-        File file = new File(getFilesDir(), "CFP.pdf");
+        String fileName = "";
+        if (conf == 1) fileName = "CFP.pdf";
+        else if (conf == 2) fileName = "schedule.pdf";
+        File file = new File(getFilesDir(), fileName);
         try
         {
-            in = assetManager.open("CFP.pdf");
+            in = assetManager.open(fileName);
             out = openFileOutput(file.getName(), Context.MODE_WORLD_READABLE);
 
             copyFile(in, out);
@@ -459,7 +467,7 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
         }
 
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.parse("file://" + getFilesDir() + "/CFP.pdf"),"application/pdf");
+        intent.setDataAndType(Uri.parse("file://" + getFilesDir() + "/" + fileName),"application/pdf");
 
         startActivity(intent);
 	}
@@ -520,7 +528,7 @@ public class NavigationDrawerActivity extends MyConferenceActivity {
 		//Register observers
 		registerObservers();
 		getAccount();
-		displayFragment(lastFragment);
+		//displayFragment(lastFragment);
 	}
 	
 	@Override

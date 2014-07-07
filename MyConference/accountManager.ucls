@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<class-diagram version="1.1.6" icons="true" automaticImage="PNG" always-add-relationships="false" generalizations="true" 
+  realizations="true" associations="true" dependencies="false" nesting-relationships="true">  
+  <class id="1" language="java" name="es.ucm.myconference.accountmanager.SyncService" project="MyConference" 
+    file="/MyConference/src/es/ucm/myconference/accountmanager/SyncService.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position x="329" y="37" width="177" height="135"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="2" language="java" name="es.ucm.myconference.accountmanager.SyncAdapter" project="MyConference" 
+    file="/MyConference/src/es/ucm/myconference/accountmanager/SyncAdapter.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position x="329" y="500" width="404" height="225"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="3" language="java" name="es.ucm.myconference.accountmanager.Authenticator" project="MyConference" 
+    file="/MyConference/src/es/ucm/myconference/accountmanager/Authenticator.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position x="1019" y="500" width="423" height="243"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="4" language="java" name="es.ucm.myconference.accountmanager.ConfsProvider" project="MyConference" 
+    file="/MyConference/src/es/ucm/myconference/accountmanager/ConfsProvider.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position x="42" y="37" width="247" height="225"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="5" language="java" name="es.ucm.myconference.accountmanager.AuthenticatorService" project="MyConference" 
+    file="/MyConference/src/es/ucm/myconference/accountmanager/AuthenticatorService.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position x="1055" y="37" width="177" height="117"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="6" language="java" name="es.ucm.myconference.accountmanager.LoginActivity.UserLoginTask" 
+    project="MyConference" file="/MyConference/src/es/ucm/myconference/accountmanager/LoginActivity.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position x="802" y="500" width="177" height="153"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="7" language="java" name="es.ucm.myconference.accountmanager.SqlHelper" project="MyConference" 
+    file="/MyConference/src/es/ucm/myconference/accountmanager/SqlHelper.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position x="546" y="37" width="216" height="135"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="8" language="java" name="es.ucm.myconference.accountmanager.LoginActivity" project="MyConference" 
+    file="/MyConference/src/es/ucm/myconference/accountmanager/LoginActivity.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position x="802" y="37" width="213" height="423"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <association id="9">    
+    <end type="SOURCE" refId="5" navigable="false">      
+      <attribute id="10" name="mAuthenticator"/>      
+      <multiplicity id="11" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="3" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="12">    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="13" name="sSyncAdapter"/>      
+      <multiplicity id="14" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="2" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="15">    
+    <end type="SOURCE" refId="8" navigable="false">      
+      <attribute id="16" name="mAuthTask"/>      
+      <multiplicity id="17" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="6" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <nesting id="18">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="6"/>  
+  </nesting>  
+  <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+    accessors="true" visibility="true">    
+    <attributes public="true" package="true" protected="true" private="true" static="true"/>    
+    <operations public="true" package="true" protected="true" private="true" static="true"/>  
+  </classifier-display>  
+  <association-display labels="true" multiplicity="true"/>
+</class-diagram>
