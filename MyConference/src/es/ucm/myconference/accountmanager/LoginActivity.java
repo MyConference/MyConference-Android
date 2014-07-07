@@ -172,7 +172,7 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 			mPasswordView.setError(getString(R.string.error_field_required));
 			focusView = mPasswordView;
 			cancel = true;
-		} else if (mPassword.length() < 9) {
+		} else if (mPassword.length() < 8) {
 			mPasswordView.setError(getString(R.string.error_invalid_password));
 			focusView = mPasswordView;
 			cancel = true;
